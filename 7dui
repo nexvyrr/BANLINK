@@ -1,0 +1,4255 @@
+local Players = game:GetService("Players")
+local UIS = game:GetService("UserInputService")
+local TweenService = game:GetService("TweenService")
+local HttpService = game:GetService("HttpService")
+local ContentProvider = game:GetService("ContentProvider")
+local RunService = game:GetService("RunService")
+local Fn = {}
+
+if not game:IsLoaded() then game.Loaded:Wait() end
+local LocalPlayer = Players.LocalPlayer
+while not LocalPlayer do
+	task.wait()
+	LocalPlayer = Players.LocalPlayer
+end
+
+local GUI_NAME = "NexvyrAvatarCopier"
+local SAVE_FILE = "NexvyrAvatarCopier.json"
+local SHELL_NAME = "NxAvatarShell"
+local DISCORD_LINK = "https://discord.gg/rE28J6fp4"
+local env = (getgenv and getgenv()) or _G
+
+if env.NexvyrAvatarCleanup then
+	pcall(env.NexvyrAvatarCleanup)
+end
+
+local conns = {}
+local function track(c)
+	conns[#conns + 1] = c
+	return c
+end
+
+local lang = "es"
+local LR = {}
+
+local Langs = {
+	es = {
+		guiTitle = "NEXVYRHUB | BANEAR",
+		byAuthor = "By 7.dui",
+		noProfile = "Sin perfil",
+		profileBtn = "Perfil",
+		statusDefault = "Escribe un usuario o ID.",
+		searchPlaceholder = "Usuario o ID",
+		searchBtn = "Buscar",
+		copyBtn = "Copiar",
+		saveBtn = "Guardar",
+		favBtn = "Favorito",
+		allOff = "Aplicar a todos: OFF",
+		allOn = "Aplicar a todos: ON",
+		restoreBtn = "Restaurar",
+		tabSavedBase = "Guardados",
+		tabFavsBase = "Favoritos",
+		navAvatar = "Avatar",
+		navSelect = "Seleccionar",
+		navInstruc = "Instrucciones",
+		navIdioma = "Idioma",
+		selTitle = "Avatar a poner",
+		selNone = "Ninguno",
+		selClearBtn = "Quitar todos",
+		selStatusDefault = "Busca un avatar y pulsa Poner en un jugador.",
+		selListTitle = "Seleccionar jugador",
+		selNoPlayers = "No hay otros jugadores.",
+		selPutBtn = "Poner",
+		closeTitle = "¿Realmente quieres cerrar?",
+		closeText = "Si cierras la GUI por completo tendras que ejecutar el script otra vez.",
+		closeLeft = "Abrir denuevo",
+		closeRight = "Cerrar Gui",
+		deleteTitle = "¿Realmente quieres borrarlo?",
+		modalBack = "Volver",
+		modalDelete = "Borrar",
+		savedEmpty = "No hay avatares guardados.",
+		favsEmpty = "No hay favoritos.",
+		openLib = "ABRIR LIBRERIA",
+		discordBtn = "DISCORD",
+		closeIntro = "CERRAR INTERFAZ",
+		linkCopied = "LINK COPIADO",
+		introSub = "E X P L O I T S   O P E N   H U B",
+		introFooter = "Founder By 7.dui",
+		idiomTitle = "Idioma / Language",
+		idiomSub = "Selecciona el idioma de la interfaz.",
+		instrTitle = "INSTRUCCIONES",
+		instrContent = "BIENVENIDO A OPEN HUB\n\nPasos para banear a gente:\n\n1.- Ocupas 2 cuentas, una donde usaras delta descaradamente y otra para clipearla y subir a Dvsm.\n\n2.- Aplica el avatar a la multi donde usaras delta.\n\n3.- Esperas pacientemente.\n\n⚠  ADVERTENCIA\n\nEsto está bajo tu propia responsabilidad, el equipo de Open HUB no se hará cargo de lo que te llegue a pasar si descubren la farsa.\nCambia tu usuario con el script y tendrás menos riesgos.",
+		usePut = "Usar",
+		searchingMsg = "Buscando...",
+		copyingMsg = "Copiando avatar...",
+		applyingMsg = "Aplicando...",
+		restoringMsg = "Restaurando...",
+		restoredMsg = "Avatar restaurado.",
+		firstSearchMsg = "Primero busca un avatar.",
+		alreadySavedMsg = "Ya esta en guardados.",
+		alreadyFavsMsg = "Ya esta en favoritos.",
+		readyMsg = "Avatar listo. Pulsa Copiar.",
+		loadingMsg = "Cargando avatar...",
+		loadingOthersMsg = "Cargando avatar para los demas...",
+		setOthersMsg = "Avatar puesto a los demas.",
+		originalsMsg = "Avatares originales.",
+		reappliedMsg = "Avatar reaplicado.",
+		removedMsg = "Eliminado de la lista.",
+		savedMsg = "Guardado: ",
+		favMsg = "Favorito: ",
+		copiedMsg = "Copiado: ",
+		noCharMsg = "No se encontro tu personaje.",
+		noShellRootMsg = "El avatar no tiene raiz.",
+		noHookMsg = "Tu executor no permite hooks: el perfil no se puede cambiar.",
+		openingProfileMsg = "Abriendo tu perfil con el avatar copiado...",
+		openingProfileOfMsg = "Abriendo perfil de ",
+		charChangedMsg = "Tu personaje cambio, intenta otra vez.",
+		noAvatarMsg = "No se pudo obtener el avatar.",
+		noIdMsg = "ID no encontrado.",
+		noUserMsg = "Usuario no encontrado.",
+		writeUserMsg = "Escribe un usuario o ID.",
+		selSearchPH = "Usuario o ID",
+		selPlayer = " jugador",
+		selPlayers = " jugadores",
+		selLoadingFor = "Cargando avatar para ",
+		selNowLooksLike = " ahora se ve como ",
+		selBackNormal = " vuelve a verse normal.",
+		selAllNormal = "Todos vuelven a verse normal.",
+		selNoneSet = "No habia avatares puestos.",
+		avatarReadySel = "Avatar listo: ",
+		avatarReadySel2 = ". Pulsa Poner en un jugador.",
+		noAvatarShell = "No se pudo armar el avatar.",
+		noAvatarShellFor = "No se pudo armar el avatar de ",
+	},
+	en = {
+		guiTitle = "NEXVYRHUB | COPY AVATAR",
+		byAuthor = "By 7.dui",
+		noProfile = "No profile",
+		profileBtn = "Profile",
+		statusDefault = "Type a username or ID.",
+		searchPlaceholder = "Username or ID",
+		searchBtn = "Search",
+		copyBtn = "Copy",
+		saveBtn = "Save",
+		favBtn = "Favorite",
+		allOff = "Apply to all: OFF",
+		allOn = "Apply to all: ON",
+		restoreBtn = "Restore",
+		tabSavedBase = "Saved",
+		tabFavsBase = "Favorites",
+		navAvatar = "Avatar",
+		navSelect = "Select",
+		navInstruc = "Instructions",
+		navIdioma = "Language",
+		selTitle = "Avatar to apply",
+		selNone = "None",
+		selClearBtn = "Clear all",
+		selStatusDefault = "Search an avatar and press Put on a player.",
+		selListTitle = "Select player",
+		selNoPlayers = "No other players.",
+		selPutBtn = "Put",
+		closeTitle = "Really want to close?",
+		closeText = "If you close the GUI completely you'll need to run the script again.",
+		closeLeft = "Open again",
+		closeRight = "Close GUI",
+		deleteTitle = "Really want to delete?",
+		modalBack = "Back",
+		modalDelete = "Delete",
+		savedEmpty = "No saved avatars.",
+		favsEmpty = "No favorites.",
+		openLib = "OPEN LIBRARY",
+		discordBtn = "DISCORD",
+		closeIntro = "CLOSE INTERFACE",
+		linkCopied = "LINK COPIED",
+		introSub = "E X P L O I T S   O P E N   H U B",
+		introFooter = "Founder By 7.dui",
+		idiomTitle = "Idioma / Language",
+		idiomSub = "Select the interface language.",
+		instrTitle = "INSTRUCTIONS",
+		instrContent = "WELCOME TO OPEN HUB\n\nSteps to get people banned:\n\n1.- You need 2 accounts, one where you'll use delta openly and another to clip it and upload to Dvsm.\n\n2.- Apply the avatar to the alt where you'll use delta.\n\n3.- Wait patiently.\n\n⚠  WARNING\n\nThis is under your own responsibility, the Open HUB team will not be held responsible for what may happen to you if the scam is discovered.\nChange your username with the script and you'll have fewer risks.",
+		usePut = "Use",
+		searchingMsg = "Searching...",
+		copyingMsg = "Copying avatar...",
+		applyingMsg = "Applying...",
+		restoringMsg = "Restoring...",
+		restoredMsg = "Avatar restored.",
+		firstSearchMsg = "Search an avatar first.",
+		alreadySavedMsg = "Already in saved.",
+		alreadyFavsMsg = "Already in favorites.",
+		readyMsg = "Avatar ready. Press Copy.",
+		loadingMsg = "Loading avatar...",
+		loadingOthersMsg = "Loading avatar for others...",
+		setOthersMsg = "Avatar applied to others.",
+		originalsMsg = "Original avatars.",
+		reappliedMsg = "Avatar reapplied.",
+		removedMsg = "Removed from list.",
+		savedMsg = "Saved: ",
+		favMsg = "Favorite: ",
+		copiedMsg = "Copied: ",
+		noCharMsg = "Your character was not found.",
+		noShellRootMsg = "The avatar has no root.",
+		noHookMsg = "Your executor doesn't support hooks: profile can't be changed.",
+		openingProfileMsg = "Opening your profile with the copied avatar...",
+		openingProfileOfMsg = "Opening profile of ",
+		charChangedMsg = "Your character changed, try again.",
+		noAvatarMsg = "Could not get the avatar.",
+		noIdMsg = "ID not found.",
+		noUserMsg = "User not found.",
+		writeUserMsg = "Type a username or ID.",
+		selSearchPH = "Username or ID",
+		selPlayer = " player",
+		selPlayers = " players",
+		selLoadingFor = "Loading avatar for ",
+		selNowLooksLike = " now looks like ",
+		selBackNormal = " is back to normal.",
+		selAllNormal = "Everyone is back to normal.",
+		selNoneSet = "No avatars were applied.",
+		avatarReadySel = "Avatar ready: ",
+		avatarReadySel2 = ". Press Put on a player.",
+		noAvatarShell = "Could not build the avatar.",
+		noAvatarShellFor = "Could not build the avatar of ",
+	},
+}
+
+local function L(key)
+	local t = Langs[lang] or Langs["es"]
+	return t[key] or (Langs["es"][key] or key)
+end
+
+local LangSync
+
+function Fn.withTimeout(secs, fn)
+	local res, done = nil, false
+	task.spawn(function()
+		local ok, r = pcall(fn)
+		if ok then res = r end
+		done = true
+	end)
+	local t0 = os.clock()
+	while not done and os.clock() - t0 < secs do task.wait(0.05) end
+	return res
+end
+
+function Fn.probeImage(id)
+	local p = Instance.new("ImageLabel")
+	p.Image = id
+	Fn.withTimeout(3, function() ContentProvider:PreloadAsync({ p }) end)
+	local ok, loaded = pcall(function() return p.IsLoaded end)
+	pcall(function() p:Destroy() end)
+	return ok and loaded
+end
+
+function Fn.textureFromAsset(direct)
+	local ok, obj = pcall(function() return game:GetObjects(direct)[1] end)
+	if not (ok and obj) then return nil end
+	local tex
+	if obj:IsA("Decal") or obj:IsA("Texture") then
+		tex = obj.Texture
+	else
+		local d = obj:FindFirstChildWhichIsA("Decal", true)
+		if d then tex = d.Texture end
+	end
+	if tex and tex ~= "" then return tex end
+	return nil
+end
+
+local Logo = { image = nil, ready = false, subs = {} }
+local Bg = { image = nil, ready = false, subs = {} }
+do
+local LOGO_ID = 14653905878
+local BG_ID = 126614954679548
+local LOGO_THUMB = "rbxthumb://type=Asset&id=" .. LOGO_ID .. "&w=150&h=150"
+local LOGO_DIRECT = "rbxassetid://" .. LOGO_ID
+
+function Fn.logoApply(image)
+	if Logo.ready then return end
+	Logo.ready, Logo.image = true, image
+	for _, fn in ipairs(Logo.subs) do task.spawn(fn, image) end
+end
+
+function Logo.onReady(fn)
+	Logo.subs[#Logo.subs + 1] = fn
+	if Logo.ready then task.spawn(fn, Logo.image) end
+end
+
+task.spawn(function()
+	task.spawn(function()
+		if Fn.probeImage(LOGO_THUMB) then Fn.logoApply(LOGO_THUMB) end
+	end)
+	task.spawn(function()
+		if Fn.probeImage(LOGO_DIRECT) then Fn.logoApply(LOGO_DIRECT) end
+	end)
+	task.spawn(function()
+		local tex = Fn.textureFromAsset(LOGO_DIRECT)
+		if tex and Fn.probeImage(tex) then Fn.logoApply(tex) end
+	end)
+	task.delay(3, function()
+		if not Logo.ready then Fn.logoApply(LOGO_THUMB) end
+	end)
+end)
+
+local BG_THUMB = "rbxthumb://type=Asset&id=" .. BG_ID .. "&w=768&h=432"
+local BG_DIRECT = "rbxassetid://" .. BG_ID
+
+function Fn.bgApply(image)
+	if Bg.ready then return end
+	Bg.ready, Bg.image = true, image
+	for _, fn in ipairs(Bg.subs) do task.spawn(fn, image) end
+end
+
+function Bg.onReady(fn)
+	Bg.subs[#Bg.subs + 1] = fn
+	if Bg.ready then task.spawn(fn, Bg.image) end
+end
+
+task.spawn(function()
+	task.spawn(function()
+		if Fn.probeImage(BG_THUMB) then Fn.bgApply(BG_THUMB) end
+	end)
+	task.spawn(function()
+		if Fn.probeImage(BG_DIRECT) then Fn.bgApply(BG_DIRECT) end
+	end)
+	task.spawn(function()
+		local tex = Fn.textureFromAsset(BG_DIRECT)
+		if tex and Fn.probeImage(tex) then Fn.bgApply(tex) end
+	end)
+	task.delay(4, function()
+		if not Bg.ready then Fn.bgApply(BG_THUMB) end
+	end)
+end)
+end
+
+task.wait(0.2)
+
+function Fn.getParent()
+	local ok, ui = pcall(function() return gethui and gethui() end)
+	if ok and ui then return ui end
+	ok, ui = pcall(function() return game:GetService("CoreGui") end)
+	if ok and ui then
+		local t = Instance.new("Folder")
+		local good = pcall(function() t.Parent = ui end)
+		t:Destroy()
+		if good then return ui end
+	end
+	return LocalPlayer:WaitForChild("PlayerGui")
+end
+
+local parent = Fn.getParent()
+do
+local old = parent:FindFirstChild(GUI_NAME)
+if old then old:Destroy() end
+local oldIntro = parent:FindFirstChild("NexvyrIntro")
+if oldIntro then oldIntro:Destroy() end
+end
+
+local WHITE = Color3.new(1, 1, 1)
+local BLACK = Color3.new(0, 0, 0)
+
+local IC = {
+	title = Color3.fromRGB(228, 230, 238),
+	titleLow = Color3.fromRGB(168, 172, 190),
+	gold = Color3.fromRGB(210, 178, 120),
+	goldLight = Color3.fromRGB(240, 214, 160),
+	soft = Color3.fromRGB(176, 168, 152),
+	btnText = Color3.fromRGB(206, 206, 214),
+	btnBg = Color3.fromRGB(10, 10, 14),
+	btnBgMain = Color3.fromRGB(64, 56, 44),
+	btnLine = Color3.fromRGB(110, 108, 118),
+}
+
+local T = {
+	text = IC.title,
+	sub = IC.soft,
+	line = IC.btnLine,
+	gold = IC.gold,
+	red = Color3.fromRGB(232, 72, 92),
+	green = Color3.fromRGB(62, 212, 142),
+	warn = Color3.fromRGB(255, 196, 84),
+}
+
+local STYLES = {
+	main = { bg = IC.btnBgMain, bgT = 0.3, stroke = IC.gold, strokeT = 0.35, text = WHITE },
+	dark = { bg = IC.btnBg, bgT = 0.5, stroke = IC.btnLine, strokeT = 0.7, text = IC.btnText },
+	danger = { bg = Color3.fromRGB(58, 24, 32), bgT = 0.35, stroke = T.red, strokeT = 0.5, text = Color3.fromRGB(255, 214, 220) },
+	green = { bg = Color3.fromRGB(22, 58, 42), bgT = 0.3, stroke = T.green, strokeT = 0.5, text = WHITE },
+}
+
+local data = { saved = {}, favs = {} }
+
+function Fn.loadData()
+	local ok, raw = pcall(function()
+		if isfile and isfile(SAVE_FILE) then return readfile(SAVE_FILE) end
+	end)
+	if ok and raw then
+		local ok2, decoded = pcall(function() return HttpService:JSONDecode(raw) end)
+		if ok2 and type(decoded) == "table" then
+			data.saved = type(decoded.saved) == "table" and decoded.saved or {}
+			data.favs = type(decoded.favs) == "table" and decoded.favs or {}
+		end
+	end
+end
+
+function Fn.saveData()
+	pcall(function()
+		if writefile then writefile(SAVE_FILE, HttpService:JSONEncode(data)) end
+	end)
+end
+Fn.loadData()
+
+local UI = {}
+local touchOnly = UIS.TouchEnabled and not UIS.MouseEnabled
+
+function UI.new(class, props)
+	local o = Instance.new(class)
+	local p
+	for k, v in pairs(props) do
+		if k == "Parent" then p = v else o[k] = v end
+	end
+	if p then o.Parent = p end
+	return o
+end
+local new = UI.new
+
+function UI.corner(o, r)
+	return new("UICorner", { Parent = o, CornerRadius = UDim.new(0, r) })
+end
+local corner = UI.corner
+
+function UI.stroke(o, color, thick, trans)
+	return new("UIStroke", {
+		Parent = o, Color = color, Thickness = thick or 1,
+		Transparency = trans or 0, ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
+	})
+end
+local stroke = UI.stroke
+
+function UI.grad(o, c1, c2, rot)
+	return new("UIGradient", { Parent = o, Color = ColorSequence.new(c1, c2), Rotation = rot or 90 })
+end
+local grad = UI.grad
+
+function UI.tween(o, info, props)
+	local t = TweenService:Create(o, info, props)
+	t:Play()
+	return t
+end
+local tween = UI.tween
+
+local gui = new("ScreenGui", {
+	Name = GUI_NAME, ResetOnSpawn = false, IgnoreGuiInset = true,
+	DisplayOrder = 999, ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
+	Parent = parent,
+})
+
+function UI.viewport()
+	local s = gui.AbsoluteSize
+	if s.X < 10 or s.Y < 10 then s = workspace.CurrentCamera.ViewportSize end
+	return s
+end
+
+function UI.clampPos(target, x, y)
+	local vp = UI.viewport()
+	local sz = target.AbsoluteSize
+	return math.clamp(x, 0, math.max(0, vp.X - sz.X)), math.clamp(y, 0, math.max(0, vp.Y - sz.Y))
+end
+
+function UI.draggable(handle, target, onTap, onDown, onUp)
+	local dragging, moved, active, startIn, startX, startY = false, false, nil, nil, 0, 0
+	track(handle.InputBegan:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseButton1
+			or input.UserInputType == Enum.UserInputType.Touch then
+			dragging, moved, active = true, false, input
+			startIn = input.Position
+			startX, startY = target.Position.X.Offset, target.Position.Y.Offset
+			if onDown then onDown() end
+			local c
+			c = input.Changed:Connect(function()
+				if input.UserInputState == Enum.UserInputState.End then
+					c:Disconnect()
+					local wasDrag = moved
+					dragging = false
+					if onUp then onUp(wasDrag) end
+					if not wasDrag and onTap then onTap() end
+				end
+			end)
+		end
+	end))
+	track(UIS.InputChanged:Connect(function(input)
+		if not dragging then return end
+		if input.UserInputType == Enum.UserInputType.MouseMovement or input == active then
+			local d = input.Position - startIn
+			if not moved and d.Magnitude < 6 then return end
+			moved = true
+			local x, y = UI.clampPos(target, startX + d.X, startY + d.Y)
+			target.Position = UDim2.fromOffset(x, y)
+		end
+	end))
+end
+
+function UI.logo(img, fallback)
+	img.ImageTransparency = 1
+	if fallback then fallback.Visible = true end
+	Logo.onReady(function(image)
+		if not image or not img.Parent then return end
+		img.Image = image
+		tween(img, TweenInfo.new(0.25, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { ImageTransparency = 0 })
+		if fallback then
+			task.delay(0.25, function() fallback.Visible = false end)
+		end
+	end)
+end
+
+function UI.background(host, overlayT)
+	local holder = new("Frame", {
+		Parent = host, Size = UDim2.fromScale(1, 1), BackgroundTransparency = 1,
+		BorderSizePixel = 0, ClipsDescendants = true,
+	})
+	local img = new("ImageLabel", {
+		Parent = holder, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5),
+		Size = UDim2.fromScale(1, 1), BackgroundTransparency = 1, BorderSizePixel = 0,
+		ScaleType = Enum.ScaleType.Crop, Image = "", ImageTransparency = 1,
+	})
+	local sc = new("UIScale", { Parent = img, Scale = 1.12 })
+	new("Frame", {
+		Parent = host, Size = UDim2.fromScale(1, 1), BackgroundColor3 = BLACK,
+		BackgroundTransparency = overlayT, BorderSizePixel = 0,
+	})
+	local shade = new("Frame", {
+		Parent = host, Size = UDim2.fromScale(1, 1), BackgroundColor3 = BLACK,
+		BackgroundTransparency = 0, BorderSizePixel = 0,
+	})
+	new("UIGradient", {
+		Parent = shade, Rotation = 90,
+		Transparency = NumberSequence.new({
+			NumberSequenceKeypoint.new(0, 0.4),
+			NumberSequenceKeypoint.new(0.5, 0.85),
+			NumberSequenceKeypoint.new(1, 0.3),
+		}),
+	})
+	Bg.onReady(function(image)
+		if not image or not img.Parent then return end
+		img.Image = image
+		tween(img, TweenInfo.new(0.8, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { ImageTransparency = 0 })
+	end)
+	return sc
+end
+
+function UI.icon(kind, parent_, color, size)
+	size = size or 16
+	local root = new("Frame", {
+		Parent = parent_, Size = UDim2.fromOffset(size, size), BackgroundTransparency = 1,
+	})
+	local inner = new("Frame", {
+		Parent = root, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5),
+		Size = UDim2.fromOffset(16, 16), BackgroundTransparency = 1,
+	})
+	new("UIScale", { Parent = inner, Scale = size / 16 })
+
+	local fills, strokes = {}, {}
+
+	local function bar(cx, cy, w, h, rot)
+		local f = new("Frame", {
+			Parent = inner, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromOffset(cx, cy),
+			Size = UDim2.fromOffset(w, h), Rotation = rot or 0, BackgroundColor3 = color, BorderSizePixel = 0,
+		})
+		corner(f, math.min(w, h) / 2)
+		fills[#fills + 1] = f
+	end
+
+	local function line(x1, y1, x2, y2, th)
+		local dx, dy = x2 - x1, y2 - y1
+		local len = math.sqrt(dx * dx + dy * dy)
+		bar((x1 + x2) / 2, (y1 + y2) / 2, len, th or 1.8, math.deg(math.atan2(dy, dx)))
+	end
+
+	local function box(cx, cy, w, h, r, th)
+		local f = new("Frame", {
+			Parent = inner, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromOffset(cx, cy),
+			Size = UDim2.fromOffset(w, h), BackgroundTransparency = 1, BorderSizePixel = 0,
+		})
+		corner(f, r)
+		strokes[#strokes + 1] = new("UIStroke", {
+			Parent = f, Color = color, Thickness = th, ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
+		})
+	end
+
+	if kind == "close" then
+		line(3.8, 3.8, 12.2, 12.2, 2)
+		line(12.2, 3.8, 3.8, 12.2, 2)
+	elseif kind == "min" then
+		bar(8, 11, 10, 2)
+	elseif kind == "plus" then
+		bar(8, 8, 11, 2)
+		bar(8, 8, 2, 11)
+	elseif kind == "search" then
+		box(7, 7, 10, 10, 5, 1.6)
+		line(10.8, 10.8, 14.2, 14.2, 2)
+	elseif kind == "copy" then
+		bar(6.5, 3.2, 7, 1.6)
+		bar(3.2, 6.5, 1.6, 7)
+		box(9.5, 9.5, 9, 9, 2, 1.6)
+	elseif kind == "trash" then
+		box(8, 2.9, 4.6, 3.2, 1.4, 1.4)
+		bar(8, 4.9, 12.5, 1.8)
+		box(8, 10.6, 9, 8.6, 2, 1.5)
+		bar(6.2, 10.8, 1.3, 4.6)
+		bar(9.8, 10.8, 1.3, 4.6)
+	elseif kind == "star" then
+		local pts = {}
+		for k = 0, 4 do
+			local a = math.rad(-90 + 72 * k)
+			pts[k] = { 8 + 7.2 * math.cos(a), 8.7 + 7.2 * math.sin(a) }
+		end
+		for k = 0, 4 do
+			local p, q = pts[k], pts[(k + 2) % 5]
+			line(p[1], p[2], q[1], q[2], 1.5)
+		end
+	elseif kind == "back" then
+		line(3, 8, 13, 8, 1.8)
+		line(3, 8, 7, 4, 1.8)
+		line(3, 8, 7, 12, 1.8)
+	elseif kind == "user" then
+		box(8, 5.2, 5.4, 5.4, 2.7, 1.5)
+		box(8, 12.4, 10.4, 5.4, 2.7, 1.5)
+	elseif kind == "info" then
+		box(8, 8, 13, 13, 6.5, 1.6)
+		bar(8, 9.5, 1.8, 4.5)
+		bar(8, 5.8, 1.8, 1.8)
+	elseif kind == "globe" then
+		box(8, 8, 13, 13, 6.5, 1.6)
+		line(8, 1.5, 8, 14.5, 1.3)
+		line(1.5, 8, 14.5, 8, 1.3)
+		box(8, 8, 9, 13, 4, 1.2)
+	elseif kind == "check" then
+		line(3, 8.5, 6.5, 12, 2)
+		line(6.5, 12, 13, 4.5, 2)
+	end
+
+	local icon = { root = root }
+	function icon.set(c)
+		for _, f in ipairs(fills) do f.BackgroundColor3 = c end
+		for _, s in ipairs(strokes) do s.Color = c end
+	end
+	return icon
+end
+
+function UI.button(o)
+	local S = STYLES[o.style or "dark"]
+	local b = new("TextButton", {
+		Parent = o.parent, Size = o.size, BackgroundColor3 = S.bg, BackgroundTransparency = S.bgT,
+		AutoButtonColor = false, Text = "", BorderSizePixel = 0, LayoutOrder = o.order or 0,
+	})
+	if o.pos then b.Position = o.pos end
+	if o.anchor then b.AnchorPoint = o.anchor end
+	corner(b, o.radius or 4)
+	local st = stroke(b, S.stroke, 1, S.strokeT)
+	local sc = new("UIScale", { Parent = b, Scale = 1 })
+
+	local row = new("Frame", { Parent = b, Size = UDim2.fromScale(1, 1), BackgroundTransparency = 1 })
+	new("UIListLayout", {
+		Parent = row, FillDirection = Enum.FillDirection.Horizontal,
+		HorizontalAlignment = Enum.HorizontalAlignment.Center,
+		VerticalAlignment = Enum.VerticalAlignment.Center,
+		Padding = UDim.new(0, 6), SortOrder = Enum.SortOrder.LayoutOrder,
+	})
+
+	local tc = o.textColor or S.text
+	local icColor = o.iconColor or tc
+	local ic, lbl
+	if o.icon then
+		ic = UI.icon(o.icon, row, icColor, o.iconSize or 14)
+		ic.root.LayoutOrder = 1
+	end
+	if o.text then
+		lbl = new("TextLabel", {
+			Parent = row, BackgroundTransparency = 1, AutomaticSize = Enum.AutomaticSize.X,
+			Size = UDim2.fromOffset(0, 16), Text = o.text, Font = Enum.Font.GothamMedium,
+			TextSize = o.textSize or 12, TextColor3 = tc, LayoutOrder = 2,
+		})
+	end
+
+	local diamonds = {}
+	if o.diamonds then
+		for _, side in ipairs({ 0, 1 }) do
+			diamonds[#diamonds + 1] = new("Frame", {
+				Parent = b, AnchorPoint = Vector2.new(0.5, 0.5),
+				Position = UDim2.new(side, side == 0 and -16 or 16, 0.5, 0),
+				Size = UDim2.fromOffset(7, 7), Rotation = 45, BackgroundColor3 = IC.gold, BorderSizePixel = 0,
+			})
+		end
+	end
+
+	local info = TweenInfo.new(0.15, Enum.EasingStyle.Quad)
+	local pinfo = TweenInfo.new(0.08, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+	local rinfo = TweenInfo.new(0.22, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
+
+	local function paint(mode)
+		local bgT, stT, bgC
+		if mode == "hover" then
+			bgT, stT = math.max(0, S.bgT - 0.18), math.max(0, S.strokeT - 0.3)
+			bgC = S.bg:Lerp(S.stroke, 0.18)
+		elseif mode == "press" then
+			bgT, stT = math.max(0, S.bgT - 0.3), math.max(0, S.strokeT - 0.4)
+			bgC = S.bg:Lerp(S.stroke, 0.3)
+		else
+			bgT, stT, bgC = S.bgT, S.strokeT, S.bg
+		end
+		tween(b, info, { BackgroundTransparency = bgT, BackgroundColor3 = bgC })
+		tween(st, info, { Transparency = stT })
+	end
+
+	b.MouseEnter:Connect(function()
+		if touchOnly then return end
+		paint("hover")
+		if ic and o.iconHover then ic.set(o.iconHover) end
+	end)
+	b.MouseLeave:Connect(function()
+		paint("idle")
+		tween(sc, rinfo, { Scale = 1 })
+		if ic and o.iconHover then ic.set(icColor) end
+	end)
+	b.MouseButton1Down:Connect(function()
+		paint("press")
+		tween(sc, pinfo, { Scale = 0.95 })
+		if ic and o.iconHover then ic.set(o.iconHover) end
+	end)
+	b.MouseButton1Up:Connect(function()
+		tween(sc, rinfo, { Scale = 1 })
+		if touchOnly then
+			paint("idle")
+			if ic and o.iconHover then ic.set(icColor) end
+		else
+			paint("hover")
+		end
+	end)
+
+	local h = { btn = b, label = lbl, icon = ic, stroke = st }
+	function h.setStyle(name)
+		S = STYLES[name] or S
+		local c = o.textColor or S.text
+		if lbl then lbl.TextColor3 = c end
+		if ic and not o.iconColor then ic.set(c) end
+		for _, d in ipairs(diamonds) do d.BackgroundColor3 = IC.gold end
+		tween(st, info, { Color = S.stroke })
+		paint("idle")
+	end
+	return h
+end
+
+function UI.winButton(parent_, kind, xOff, accent)
+	local b = new("TextButton", {
+		Parent = parent_, AnchorPoint = Vector2.new(1, 0.5), Position = UDim2.new(1, xOff, 0.5, 0),
+		Size = UDim2.fromOffset(28, 28), BackgroundColor3 = IC.btnBg, BackgroundTransparency = 0.45,
+		AutoButtonColor = false, Text = "", BorderSizePixel = 0,
+	})
+	corner(b, 4)
+	local st = stroke(b, IC.btnLine, 1, 0.65)
+	local sc = new("UIScale", { Parent = b, Scale = 1 })
+	local ic = UI.icon(kind, b, IC.soft, 14)
+	ic.root.AnchorPoint = Vector2.new(0.5, 0.5)
+	ic.root.Position = UDim2.fromScale(0.5, 0.5)
+
+	local info = TweenInfo.new(0.14, Enum.EasingStyle.Quad)
+	local pinfo = TweenInfo.new(0.08, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+	local rinfo = TweenInfo.new(0.25, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
+
+	local function state(bgColor, bgT, strokeColor, strokeT, iconColor)
+		tween(b, info, { BackgroundColor3 = bgColor, BackgroundTransparency = bgT })
+		tween(st, info, { Color = strokeColor, Transparency = strokeT })
+		ic.set(iconColor)
+	end
+	local function idle() state(IC.btnBg, 0.45, IC.btnLine, 0.65, IC.soft) end
+	local function over() state(accent:Lerp(BLACK, 0.7), 0.15, accent, 0.2, WHITE) end
+
+	b.MouseEnter:Connect(function()
+		if touchOnly then return end
+		over()
+		if kind == "close" then
+			tween(ic.root, rinfo, { Rotation = 90 })
+		end
+	end)
+	b.MouseLeave:Connect(function()
+		idle()
+		tween(sc, rinfo, { Scale = 1 })
+		tween(ic.root, rinfo, { Rotation = 0 })
+	end)
+	b.MouseButton1Down:Connect(function()
+		over()
+		tween(sc, pinfo, { Scale = 0.88 })
+	end)
+	b.MouseButton1Up:Connect(function()
+		tween(sc, rinfo, { Scale = 1 })
+		if touchOnly then
+			idle()
+		else
+			over()
+		end
+	end)
+	return b
+end
+
+function UI.modal(host)
+	local overlay = new("Frame", {
+		Parent = host, Size = UDim2.fromScale(1, 1), BackgroundColor3 = BLACK,
+		BackgroundTransparency = 1, BorderSizePixel = 0, Active = true, Visible = false, ZIndex = 100,
+	})
+	local box = new("Frame", {
+		Parent = overlay, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5),
+		Size = UDim2.fromOffset(300, 142), BackgroundColor3 = IC.btnBg, BackgroundTransparency = 0.08,
+		BorderSizePixel = 0, ZIndex = 101,
+	})
+	corner(box, 6)
+	local boxStroke = stroke(box, WHITE, 1.2, 0.2)
+	grad(boxStroke, IC.gold, IC.btnLine, 60)
+	local scale = new("UIScale", { Parent = box, Scale = 0.9 })
+	local title = new("TextLabel", {
+		Parent = box, Position = UDim2.fromOffset(14, 12), Size = UDim2.new(1, -28, 0, 26),
+		BackgroundTransparency = 1, Text = "", Font = Enum.Font.Garamond,
+		TextSize = 22, TextColor3 = IC.title, TextXAlignment = Enum.TextXAlignment.Left, ZIndex = 102,
+	})
+	local text = new("TextLabel", {
+		Parent = box, Position = UDim2.fromOffset(14, 42), Size = UDim2.new(1, -28, 0, 34),
+		BackgroundTransparency = 1, Text = "", Font = Enum.Font.Gotham, TextSize = 12,
+		TextColor3 = IC.soft, TextWrapped = true, TextXAlignment = Enum.TextXAlignment.Left,
+		TextYAlignment = Enum.TextYAlignment.Top, ZIndex = 102,
+	})
+	local left = UI.button({
+		parent = box, text = L("modalBack"), size = UDim2.fromOffset(129, 34),
+		pos = UDim2.fromOffset(14, 94), style = "dark", textSize = 13,
+	})
+	local right = UI.button({
+		parent = box, text = "Aceptar", size = UDim2.fromOffset(129, 34),
+		pos = UDim2.fromOffset(157, 94), style = "danger", textSize = 13,
+	})
+	for _, d in ipairs(box:GetDescendants()) do
+		if d:IsA("GuiObject") and d.ZIndex < 102 then d.ZIndex = 102 end
+	end
+
+	local m = {}
+	local cbLeft, cbRight
+	local showToken = 0
+
+	function m.show(o)
+		showToken = showToken + 1
+		title.Text = o.title or ""
+		text.Text = o.text or ""
+		left.label.Text = o.leftText or L("modalBack")
+		right.label.Text = o.rightText or "Aceptar"
+		left.setStyle(o.leftStyle or "dark")
+		right.setStyle(o.rightStyle or "danger")
+		cbLeft, cbRight = o.onLeft, o.onRight
+		overlay.Visible = true
+		tween(overlay, TweenInfo.new(0.2), { BackgroundTransparency = 0.45 })
+		scale.Scale = 0.9
+		tween(scale, TweenInfo.new(0.25, Enum.EasingStyle.Back, Enum.EasingDirection.Out), { Scale = 1 })
+	end
+
+	function m.hide()
+		showToken = showToken + 1
+		local my = showToken
+		tween(scale, TweenInfo.new(0.18, Enum.EasingStyle.Quad, Enum.EasingDirection.In), { Scale = 0.9 })
+		local t = tween(overlay, TweenInfo.new(0.18), { BackgroundTransparency = 1 })
+		t.Completed:Connect(function()
+			if showToken == my then overlay.Visible = false end
+		end)
+	end
+
+	left.btn.MouseButton1Click:Connect(function()
+		m.hide()
+		if cbLeft then cbLeft() end
+	end)
+	right.btn.MouseButton1Click:Connect(function()
+		m.hide()
+		if cbRight then cbRight() end
+	end)
+	return m
+end
+
+local W, H = 540, 366
+local BASE, Root
+do
+local vp0 = UI.viewport()
+BASE = math.min(1, (vp0.Y - 24) / H, (vp0.X - 24) / W)
+
+Root = new("Frame", {
+	Parent = gui, BackgroundTransparency = 1, Active = true,
+	Size = UDim2.fromOffset(W * BASE, H * BASE),
+	Position = UDim2.fromOffset(math.floor((vp0.X - W * BASE) / 2), math.floor((vp0.Y - H * BASE) / 2)),
+	Visible = false,
+})
+end
+
+local Window = new("CanvasGroup", {
+	Parent = Root, AnchorPoint = Vector2.new(0.5, 0.5),
+	Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromOffset(W, H),
+	BackgroundColor3 = BLACK, BackgroundTransparency = 0, BorderSizePixel = 0,
+	Active = true, GroupTransparency = 1,
+})
+corner(Window, 8)
+do
+local winStroke = stroke(Window, WHITE, 1.2, 0.2)
+grad(winStroke, IC.gold, IC.btnLine, 60)
+end
+local winScale = new("UIScale", { Parent = Window, Scale = BASE * 0.6 })
+
+local bgScale = UI.background(Window, 0.5)
+
+local TopBar = new("Frame", {
+	Parent = Window, Size = UDim2.new(1, 0, 0, 42), BackgroundTransparency = 1,
+})
+local headLine = new("Frame", {
+	Parent = Window, AnchorPoint = Vector2.new(0.5, 0), Position = UDim2.new(0.5, 0, 0, 42),
+	Size = UDim2.new(1, 0, 0, 1), BackgroundColor3 = IC.gold, BorderSizePixel = 0,
+})
+new("UIGradient", {
+	Parent = headLine,
+	Transparency = NumberSequence.new({
+		NumberSequenceKeypoint.new(0, 1),
+		NumberSequenceKeypoint.new(0.5, 0.3),
+		NumberSequenceKeypoint.new(1, 1),
+	}),
+})
+local btnMin, btnClose
+do
+local dragArea = new("Frame", {
+	Parent = TopBar, Size = UDim2.new(1, -86, 1, 0), BackgroundTransparency = 1, Active = true,
+})
+
+local logo = new("Frame", {
+	Parent = TopBar, Position = UDim2.fromOffset(12, 8), Size = UDim2.fromOffset(26, 26),
+	BackgroundTransparency = 1, BorderSizePixel = 0, ClipsDescendants = true,
+})
+corner(logo, 8)
+local logoImg = new("ImageLabel", {
+	Parent = logo, Size = UDim2.fromScale(1, 1), BackgroundTransparency = 1,
+	ScaleType = Enum.ScaleType.Crop, Image = "", BorderSizePixel = 0, ImageTransparency = 1,
+})
+corner(logoImg, 8)
+UI.logo(logoImg)
+
+local titleMain = new("TextLabel", {
+	Parent = TopBar, Position = UDim2.fromOffset(48, 3), Size = UDim2.fromOffset(190, 24),
+	BackgroundTransparency = 1, Text = L("guiTitle"), Font = Enum.Font.Garamond,
+	TextSize = 22, TextColor3 = WHITE, TextXAlignment = Enum.TextXAlignment.Left,
+	TextStrokeTransparency = 0.88, TextStrokeColor3 = BLACK, TextTruncate = Enum.TextTruncate.AtEnd,
+})
+grad(titleMain, IC.title, IC.titleLow, 90)
+LR["titleMain"] = titleMain
+
+new("TextLabel", {
+	Parent = TopBar, Position = UDim2.fromOffset(48, 25), Size = UDim2.fromOffset(190, 14),
+	BackgroundTransparency = 1, Text = L("byAuthor"), Font = Enum.Font.Garamond,
+	TextSize = 15, TextColor3 = IC.soft, TextXAlignment = Enum.TextXAlignment.Left,
+})
+
+btnMin = UI.winButton(TopBar, "min", -44, IC.gold)
+btnClose = UI.winButton(TopBar, "close", -10, T.red)
+
+UI.draggable(dragArea, Root)
+end
+
+local Left = new("Frame", {
+	Parent = Window, Position = UDim2.fromOffset(10, 52), Size = UDim2.fromOffset(190, 304),
+	BackgroundColor3 = IC.btnBg, BackgroundTransparency = 0.4, BorderSizePixel = 0,
+})
+corner(Left, 6)
+stroke(Left, IC.btnLine, 1, 0.65)
+
+local preview, previewHint
+do
+local previewHolder = new("Frame", {
+	Parent = Left, Position = UDim2.fromOffset(10, 10), Size = UDim2.fromOffset(170, 170),
+	BackgroundColor3 = IC.btnBg, BackgroundTransparency = 0.35, BorderSizePixel = 0, ClipsDescendants = true,
+})
+corner(previewHolder, 6)
+local prevStroke = stroke(previewHolder, WHITE, 1, 0.3)
+grad(prevStroke, IC.gold, IC.btnLine, 45)
+preview = new("ImageLabel", {
+	Parent = previewHolder, Size = UDim2.fromScale(1, 1), BackgroundTransparency = 1,
+	Image = "", ScaleType = Enum.ScaleType.Fit, BorderSizePixel = 0,
+})
+previewHint = new("TextLabel", {
+	Parent = previewHolder, Size = UDim2.fromScale(1, 1), BackgroundTransparency = 1,
+	Text = L("noProfile"), Font = Enum.Font.GothamMedium, TextSize = 12, TextColor3 = IC.soft,
+})
+LR["previewHint"] = previewHint
+end
+
+local nameLabel = new("TextLabel", {
+	Parent = Left, Position = UDim2.fromOffset(10, 190), Size = UDim2.fromOffset(170, 34),
+	BackgroundTransparency = 1, Text = "-", Font = Enum.Font.GothamBold, TextSize = 13,
+	TextColor3 = IC.title, TextXAlignment = Enum.TextXAlignment.Left, TextYAlignment = Enum.TextYAlignment.Top,
+	TextTruncate = Enum.TextTruncate.AtEnd, TextWrapped = true, RichText = true,
+})
+local idLabel
+do
+local idChip = new("Frame", {
+	Parent = Left, Position = UDim2.fromOffset(10, 228), Size = UDim2.fromOffset(0, 16),
+	AutomaticSize = Enum.AutomaticSize.X, BackgroundColor3 = IC.btnBgMain, BackgroundTransparency = 0.45,
+	BorderSizePixel = 0,
+})
+corner(idChip, 4)
+new("UIPadding", { Parent = idChip, PaddingLeft = UDim.new(0, 7), PaddingRight = UDim.new(0, 7) })
+idLabel = new("TextLabel", {
+	Parent = idChip, Size = UDim2.fromOffset(0, 16), AutomaticSize = Enum.AutomaticSize.X,
+	BackgroundTransparency = 1, Text = "ID: -", Font = Enum.Font.GothamMedium, TextSize = 10,
+	TextColor3 = IC.gold,
+})
+end
+
+local btnProfile = UI.button({
+	parent = Left, text = L("profileBtn"), icon = "user", iconSize = 12, size = UDim2.fromOffset(60, 22),
+	pos = UDim2.fromOffset(120, 225), style = "dark", textSize = 11,
+})
+LR["btnProfile"] = btnProfile.label
+
+do
+local statusDot = new("Frame", {
+	Parent = Left, Position = UDim2.fromOffset(12, 252), Size = UDim2.fromOffset(6, 6),
+	BackgroundColor3 = IC.soft, BorderSizePixel = 0,
+})
+corner(statusDot, 3)
+local statusLabel = new("TextLabel", {
+	Parent = Left, Position = UDim2.fromOffset(24, 246), Size = UDim2.fromOffset(156, 32),
+	BackgroundTransparency = 1, Text = L("statusDefault"), Font = Enum.Font.Gotham,
+	TextSize = 11, TextColor3 = IC.soft, TextWrapped = true, TextTruncate = Enum.TextTruncate.AtEnd,
+	TextXAlignment = Enum.TextXAlignment.Left, TextYAlignment = Enum.TextYAlignment.Top,
+})
+local progressTrack = new("Frame", {
+	Parent = Left, Position = UDim2.fromOffset(10, 292), Size = UDim2.fromOffset(170, 3),
+	BackgroundColor3 = IC.btnBg, BackgroundTransparency = 0.3, BorderSizePixel = 0, ClipsDescendants = true,
+})
+corner(progressTrack, 2)
+local progressFill = new("Frame", {
+	Parent = progressTrack, Size = UDim2.new(0, 0, 1, 0), BackgroundColor3 = WHITE, BorderSizePixel = 0,
+})
+corner(progressFill, 2)
+grad(progressFill, IC.gold, IC.goldLight, 0)
+
+function Fn.setStatus(text, color)
+	statusLabel.Text = text
+	statusLabel.TextColor3 = color or IC.soft
+	statusDot.BackgroundColor3 = color or IC.soft
+	if UI.onStatus then pcall(UI.onStatus, text, color) end
+end
+
+function Fn.setProgress(p)
+	tween(progressFill, TweenInfo.new(0.25, Enum.EasingStyle.Quad), {
+		Size = UDim2.new(math.clamp(p, 0, 1), 0, 1, 0),
+	})
+end
+end
+
+local Right = new("Frame", {
+	Parent = Window, Position = UDim2.fromOffset(210, 52), Size = UDim2.fromOffset(320, 304),
+	BackgroundTransparency = 1,
+})
+
+local input
+do
+local inputBox = new("Frame", {
+	Parent = Right, Size = UDim2.fromOffset(240, 36), BackgroundColor3 = IC.btnBg,
+	BackgroundTransparency = 0.4, BorderSizePixel = 0,
+})
+corner(inputBox, 4)
+local inputStroke = stroke(inputBox, IC.btnLine, 1, 0.55)
+local searchIcon = UI.icon("search", inputBox, IC.soft, 15)
+searchIcon.root.Position = UDim2.fromOffset(10, 10)
+input = new("TextBox", {
+	Parent = inputBox, Position = UDim2.fromOffset(32, 0), Size = UDim2.new(1, -42, 1, 0),
+	BackgroundTransparency = 1, BorderSizePixel = 0, Text = "", PlaceholderText = L("searchPlaceholder"),
+	PlaceholderColor3 = IC.soft, TextColor3 = IC.title, Font = Enum.Font.GothamMedium,
+	TextSize = 13, ClearTextOnFocus = false, TextXAlignment = Enum.TextXAlignment.Left,
+	ClipsDescendants = true,
+})
+LR["inputPH"] = input
+input.Focused:Connect(function()
+	tween(inputStroke, TweenInfo.new(0.15), { Color = IC.gold, Transparency = 0.2 })
+	searchIcon.set(IC.gold)
+end)
+input.FocusLost:Connect(function()
+	tween(inputStroke, TweenInfo.new(0.15), { Color = IC.btnLine, Transparency = 0.55 })
+	searchIcon.set(IC.soft)
+end)
+end
+
+local btnSearch = UI.button({
+	parent = Right, text = L("searchBtn"), size = UDim2.fromOffset(74, 36),
+	pos = UDim2.fromOffset(246, 0), style = "main", textSize = 12,
+})
+LR["btnSearch"] = btnSearch.label
+
+local btnCopy = UI.button({
+	parent = Right, text = L("copyBtn"), icon = "copy", size = UDim2.fromOffset(102, 34),
+	pos = UDim2.fromOffset(0, 44), style = "main",
+})
+LR["btnCopy"] = btnCopy.label
+
+local btnSave = UI.button({
+	parent = Right, text = L("saveBtn"), icon = "plus", size = UDim2.fromOffset(102, 34),
+	pos = UDim2.fromOffset(109, 44), style = "dark",
+})
+LR["btnSave"] = btnSave.label
+
+local btnFav = UI.button({
+	parent = Right, text = L("favBtn"), icon = "star", size = UDim2.fromOffset(102, 34),
+	pos = UDim2.fromOffset(218, 44), style = "dark",
+})
+LR["btnFav"] = btnFav.label
+btnFav.icon.set(T.warn)
+
+local btnAll = UI.button({
+	parent = Right, text = L("allOff"), icon = "user", size = UDim2.fromOffset(156, 30),
+	pos = UDim2.fromOffset(0, 86), style = "dark", textSize = 11,
+})
+LR["btnAll"] = btnAll.label
+
+local btnLang = UI.button({
+	parent = Right, text = L("navIdioma"), icon = "globe", iconSize = 14, size = UDim2.fromOffset(156, 30),
+	pos = UDim2.fromOffset(164, 86), style = "dark", textSize = 11,
+})
+LR["btnLang"] = btnLang.label
+
+local tabStrokes = {}
+local tabSaved, tabFavs
+do
+local tabBar = new("Frame", {
+	Parent = Right, Position = UDim2.fromOffset(0, 124), Size = UDim2.fromOffset(200, 30),
+	BackgroundColor3 = IC.btnBg, BackgroundTransparency = 0.4, BorderSizePixel = 0,
+})
+corner(tabBar, 4)
+stroke(tabBar, IC.btnLine, 1, 0.65)
+
+function Fn.makeTab(text, x, key)
+	local t = new("TextButton", {
+		Parent = tabBar, Position = UDim2.fromOffset(x, 3), Size = UDim2.fromOffset(96, 24),
+		BackgroundColor3 = IC.btnBgMain, BackgroundTransparency = 1, AutoButtonColor = false,
+		Text = text, Font = Enum.Font.GothamMedium, TextSize = 11, TextColor3 = IC.soft, BorderSizePixel = 0,
+	})
+	corner(t, 3)
+	tabStrokes[key] = stroke(t, IC.gold, 1, 1)
+	return t
+end
+tabSaved = Fn.makeTab(L("tabSavedBase"), 3, "saved")
+tabFavs = Fn.makeTab(L("tabFavsBase"), 101, "favs")
+end
+
+local btnRestore = UI.button({
+	parent = Right, text = L("restoreBtn"), icon = "back", size = UDim2.fromOffset(114, 30),
+	pos = UDim2.fromOffset(206, 124), style = "dark", textSize = 11,
+})
+LR["btnRestore"] = btnRestore.label
+
+local listFrame = new("ScrollingFrame", {
+	Parent = Right, Position = UDim2.fromOffset(0, 162), Size = UDim2.fromOffset(320, 144),
+	BackgroundColor3 = IC.btnBg, BackgroundTransparency = 0.4, BorderSizePixel = 0, ScrollBarThickness = 3,
+	ScrollBarImageColor3 = IC.gold, CanvasSize = UDim2.new(), AutomaticCanvasSize = Enum.AutomaticSize.Y,
+	ScrollingDirection = Enum.ScrollingDirection.Y, ClipsDescendants = true,
+})
+corner(listFrame, 6)
+stroke(listFrame, IC.btnLine, 1, 0.65)
+new("UIPadding", {
+	Parent = listFrame, PaddingTop = UDim.new(0, 6), PaddingBottom = UDim.new(0, 6),
+	PaddingLeft = UDim.new(0, 6), PaddingRight = UDim.new(0, 6),
+})
+new("UIListLayout", { Parent = listFrame, Padding = UDim.new(0, 6), SortOrder = Enum.SortOrder.LayoutOrder })
+
+local Modal = UI.modal(Window)
+
+local current = nil
+local busy = false
+local applying = false
+local thumbCache = {}
+local pendingId = nil
+
+function Fn.getThumb(id, ttype, size)
+	for i = 1, 4 do
+		local ok, content, ready = pcall(Players.GetUserThumbnailAsync, Players, id, ttype, size)
+		if ok and content and content ~= "" and (ready or i == 4) then return content end
+		task.wait(0.25)
+	end
+end
+
+function Fn.headThumb(id)
+	if thumbCache[id] then return thumbCache[id] end
+	local c = Fn.getThumb(id, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size48x48)
+	thumbCache[id] = c
+	return c
+end
+
+function Fn.resolveUser(text)
+	text = string.match(text or "", "^%s*(.-)%s*$")
+	if text == "" then return nil, L("writeUserMsg") end
+	local id, name
+	if text:match("^%d+$") then
+		id = tonumber(text)
+		local ok, n = pcall(Players.GetNameFromUserIdAsync, Players, id)
+		if ok then
+			name = n
+		else
+			local ok2, id2 = pcall(Players.GetUserIdFromNameAsync, Players, text)
+			if ok2 then id = id2 else return nil, L("noIdMsg") end
+		end
+	else
+		local ok, uid = pcall(Players.GetUserIdFromNameAsync, Players, text)
+		if not ok then return nil, L("noUserMsg") end
+		id = uid
+	end
+	if not name then
+		local ok, n = pcall(Players.GetNameFromUserIdAsync, Players, id)
+		name = ok and n or text
+	end
+	return id, name
+end
+
+Fn.LEG_NAMES = {
+	LeftFoot = true, RightFoot = true, LeftLowerLeg = true, RightLowerLeg = true,
+	["Left Leg"] = true, ["Right Leg"] = true,
+}
+
+Fn.STD_PARTS = {}
+for _, n in ipairs({
+	"Head", "UpperTorso", "LowerTorso", "LeftUpperArm", "LeftLowerArm", "LeftHand",
+	"RightUpperArm", "RightLowerArm", "RightHand", "LeftUpperLeg", "LeftLowerLeg", "LeftFoot",
+	"RightUpperLeg", "RightLowerLeg", "RightFoot", "Torso", "Left Arm", "Right Arm", "Left Leg", "Right Leg",
+}) do
+	Fn.STD_PARTS[n] = true
+end
+
+local State = {
+	template = nil, copyEntry = nil, shell = nil, sRoot = nil, shellParts = {}, char = nil,
+	conns = {}, hidden = {}, pairList = {}, offset = CFrame.new(), fp = false, lastScan = 0,
+	sAnimator = nil, mirror = {}, animActive = false, c0Dirty = false,
+}
+
+local Build = {}
+local BuildOrder = {}
+Fn.MAX_BUILDS = 4
+
+function Fn.loadAsset(id)
+	local obj
+	local ok = pcall(function() obj = game:GetObjects("rbxassetid://" .. id)[1] end)
+	if ok and obj then return obj end
+	ok = pcall(function() obj = game:GetService("InsertService"):LoadAsset(id) end)
+	if ok and obj then return obj end
+end
+
+function Fn.findClass(obj, class)
+	if not obj then return nil end
+	if obj:IsA(class) then return obj end
+	return obj:FindFirstChildWhichIsA(class, true)
+end
+
+function Fn.preload(model)
+	local list = {}
+	for _, d in ipairs(model:GetDescendants()) do
+		if d:IsA("MeshPart") or d:IsA("SpecialMesh") or d:IsA("Decal") or d:IsA("Texture")
+			or d:IsA("SurfaceAppearance") or d:IsA("Shirt") or d:IsA("Pants") or d:IsA("ShirtGraphic") then
+			list[#list + 1] = d
+		end
+	end
+	if #list == 0 then return end
+	Fn.withTimeout(15, function() ContentProvider:PreloadAsync(list) end)
+end
+
+function Fn.buildFromAssets(desc)
+	local model = Instance.new("Model")
+	model.Name = "AvatarSource"
+	local pending = 0
+	local function async(fn)
+		pending = pending + 1
+		task.spawn(function()
+			pcall(fn)
+			pending = pending - 1
+		end)
+	end
+
+	local bc = Instance.new("BodyColors")
+	bc.HeadColor3 = desc.HeadColor
+	bc.TorsoColor3 = desc.TorsoColor
+	bc.LeftArmColor3 = desc.LeftArmColor
+	bc.RightArmColor3 = desc.RightArmColor
+	bc.LeftLegColor3 = desc.LeftLegColor
+	bc.RightLegColor3 = desc.RightLegColor
+	bc.Parent = model
+
+	local function loadInto(id, class, rename)
+		if id and id > 0 then
+			async(function()
+				local o = Fn.findClass(Fn.loadAsset(id), class)
+				if o then
+					if rename then o.Name = rename end
+					o.Parent = model
+				end
+			end)
+		end
+	end
+	loadInto(desc.Shirt, "Shirt")
+	loadInto(desc.Pants, "Pants")
+	loadInto(desc.GraphicTShirt, "ShirtGraphic")
+	loadInto(desc.Face, "Decal", "face")
+
+	local okA, accs = pcall(function() return desc:GetAccessories(true) end)
+	if okA and type(accs) == "table" then
+		for _, a in ipairs(accs) do
+			if a.AssetId and a.AssetId > 0 then
+				async(function()
+					local acc = Fn.findClass(Fn.loadAsset(a.AssetId), "Accessory")
+					if acc then
+						local wl = acc:FindFirstChildWhichIsA("WrapLayer", true)
+						if wl then
+							if a.Order then wl.Order = a.Order end
+							if a.Puffiness then wl.Puffiness = a.Puffiness end
+						end
+						acc.Parent = model
+					end
+				end)
+			end
+		end
+	end
+
+	local t0 = os.clock()
+	while pending > 0 and os.clock() - t0 < 25 do task.wait(0.05) end
+	return model
+end
+
+function Fn.attachByAttachments(model, acc)
+	local handle = acc:FindFirstChild("Handle")
+	if not handle or not handle:IsA("BasePart") then
+		acc.Parent = model
+		return false
+	end
+	for _, d in ipairs(handle:GetChildren()) do
+		if d:IsA("Weld") or d:IsA("Motor6D") or d:IsA("WeldConstraint") then d:Destroy() end
+	end
+	for _, a in ipairs(handle:GetChildren()) do
+		if a:IsA("Attachment") then
+			local target
+			for _, p in ipairs(model:GetChildren()) do
+				if p:IsA("BasePart") then
+					local t = p:FindFirstChild(a.Name)
+					if t and t:IsA("Attachment") then
+						target = t
+						break
+					end
+				end
+			end
+			if target then
+				local w = Instance.new("Weld")
+				w.Name = "AccessoryWeld"
+				w.Part0 = handle
+				w.Part1 = target.Parent
+				w.C0 = a.CFrame
+				w.C1 = target.CFrame
+				w.Parent = handle
+				acc.Parent = model
+				return true
+			end
+		end
+	end
+	acc.Parent = model
+	return false
+end
+
+function Fn.prepShell(model)
+	for _, d in ipairs(model:GetDescendants()) do
+		if d:IsA("LuaSourceContainer") or d:IsA("Tool") or d:IsA("ForceField")
+			or d:IsA("Sound") or d:IsA("BillboardGui") or d:IsA("SurfaceGui") then
+			pcall(function() d:Destroy() end)
+		end
+	end
+	for _, d in ipairs(model:GetDescendants()) do
+		if d:IsA("BasePart") then
+			pcall(function()
+				d.Anchored = false
+				d.CanCollide = false
+				d.CanTouch = false
+				d.CanQuery = false
+				d.Massless = true
+			end)
+		end
+	end
+	local root = model:FindFirstChild("HumanoidRootPart")
+	if root then root.Anchored = true end
+	local h = model:FindFirstChildOfClass("Humanoid")
+	if h then
+		pcall(function() h.DisplayDistanceType = Enum.HumanoidDisplayDistanceType.None end)
+		pcall(function() h.HealthDisplayType = Enum.HumanoidHealthDisplayType.AlwaysOff end)
+		pcall(function() h.BreakJointsOnDeath = false end)
+		pcall(function() h.RequiresNeck = false end)
+		pcall(function() h.EvaluateStateMachine = false end)
+		pcall(function() h.AutoRotate = false end)
+		pcall(function() h.WalkSpeed = 0 end)
+	end
+end
+
+function Fn.templateFromDescription(desc, rig)
+	for attempt = 1, 3 do
+		local m = Fn.withTimeout(30, function()
+			return Players:CreateHumanoidModelFromDescription(desc, rig)
+		end)
+		if typeof(m) == "Instance" then
+			local h = m:FindFirstChildOfClass("Humanoid")
+			if m:FindFirstChild("HumanoidRootPart") and h and h.RigType == rig then
+				return m
+			end
+			pcall(function() m:Destroy() end)
+		end
+		task.wait(0.3)
+	end
+	return nil
+end
+
+function Fn.templateFromAssets(desc, char)
+	local base
+	local okc = pcall(function()
+		char.Archivable = true
+		for _, d in ipairs(char:GetDescendants()) do
+			pcall(function() d.Archivable = true end)
+		end
+		for inst, t in pairs(State.hidden) do
+			if inst.Parent then inst.Transparency = t end
+		end
+		base = char:Clone()
+		for inst in pairs(State.hidden) do
+			if inst.Parent then inst.Transparency = 1 end
+		end
+	end)
+	if not okc or not base then return nil end
+
+	for _, d in ipairs(base:GetDescendants()) do
+		if d:IsA("LuaSourceContainer") or d:IsA("Tool") or d:IsA("Accoutrement")
+			or d:IsA("CharacterAppearance") or d:IsA("BillboardGui") or d:IsA("SurfaceGui")
+			or d:IsA("Highlight") or d:IsA("ForceField") then
+			pcall(function() d:Destroy() end)
+		end
+	end
+
+	local src = Fn.buildFromAssets(desc)
+	for _, c in ipairs(src:GetChildren()) do
+		if c:IsA("CharacterAppearance") then c.Parent = base end
+	end
+	local head = base:FindFirstChild("Head")
+	local face = src:FindFirstChild("face")
+	if head and face then
+		for _, d in ipairs(head:GetChildren()) do
+			if d:IsA("Decal") then d:Destroy() end
+		end
+		face.Parent = head
+	end
+	for _, a in ipairs(src:GetChildren()) do
+		if a:IsA("Accoutrement") then Fn.attachByAttachments(base, a) end
+	end
+	pcall(function() src:Destroy() end)
+	return base
+end
+
+function Fn.lowestLeg(model)
+	local root = model:FindFirstChild("HumanoidRootPart")
+	if not root then return nil end
+	local cf = { [root] = CFrame.identity }
+	local joints = {}
+	for _, d in ipairs(model:GetDescendants()) do
+		if d:IsA("Motor6D") and d.Part0 and d.Part1 then joints[#joints + 1] = d end
+	end
+	local changed, guard = true, 0
+	while changed and guard < 30 do
+		changed = false
+		guard = guard + 1
+		for _, j in ipairs(joints) do
+			local a, b = j.Part0, j.Part1
+			if cf[a] and not cf[b] then
+				cf[b] = cf[a] * j.C0 * j.C1:Inverse()
+				changed = true
+			elseif cf[b] and not cf[a] then
+				cf[a] = cf[b] * j.C1 * j.C0:Inverse()
+				changed = true
+			end
+		end
+	end
+	local low
+	for p, c in pairs(cf) do
+		if Fn.LEG_NAMES[p.Name] and p.Parent == model then
+			local s = p.Size
+			local ext = 0.5 * (math.abs(c.RightVector.Y) * s.X + math.abs(c.UpVector.Y) * s.Y + math.abs(c.LookVector.Y) * s.Z)
+			local y = c.Position.Y - ext
+			if not low or y < low then low = y end
+		end
+	end
+	return low
+end
+
+local Rig = {}
+
+function Rig.transform(rm)
+	local p0, p1 = rm.Part0, rm.Part1
+	if p0 and p1 then
+		return (p0.CFrame * rm.C0):Inverse() * (p1.CFrame * rm.C1)
+	end
+	return rm.Transform
+end
+
+function Rig.pose(list)
+	for _, pr in ipairs(list) do
+		local rm, sm, base = pr[1], pr[2], pr[3]
+		if rm.Parent and sm.Parent then
+			local ok, tr = pcall(Rig.transform, rm)
+			if ok and tr then sm.C0 = base * tr end
+		end
+	end
+end
+
+function Rig.reset(list)
+	for _, pr in ipairs(list) do
+		if pr[2].Parent then pr[2].C0 = pr[3] end
+	end
+end
+
+function Rig.pairs(char, shell)
+	local list = {}
+	for _, rm in ipairs(char:GetDescendants()) do
+		if rm:IsA("Motor6D") and rm.Parent and rm.Parent.Parent == char then
+			local sp = shell:FindFirstChild(rm.Parent.Name)
+			local sm = sp and sp:FindFirstChild(rm.Name)
+			if sm and sm:IsA("Motor6D") then
+				list[#list + 1] = { rm, sm, sm.C0 }
+			end
+		end
+	end
+	return list
+end
+
+function Rig.offset(char, shell)
+	local dy = 0
+	local lowR, lowS = Fn.lowestLeg(char), Fn.lowestLeg(shell)
+	if lowR and lowS then dy = math.clamp(lowR - lowS, -8, 8) end
+	return CFrame.new(0, dy, 0)
+end
+
+function Rig.animator(shell)
+	local sh = shell:FindFirstChildOfClass("Humanoid")
+	if not sh then return nil end
+	pcall(function() sh.WalkSpeed = 0 end)
+	pcall(function() sh.JumpPower = 0 end)
+	pcall(function() sh.AutoRotate = false end)
+	local a = sh:FindFirstChildOfClass("Animator")
+	if not a then
+		a = Instance.new("Animator")
+		a.Parent = sh
+	end
+	return a
+end
+
+function Rig.parts(shell)
+	local parts = {}
+	for _, d in ipairs(shell:GetDescendants()) do
+		if d:IsA("BasePart") then
+			pcall(function()
+				d.CanCollide = false
+				d.CanTouch = false
+				d.CanQuery = false
+				d.Massless = true
+			end)
+			parts[#parts + 1] = d
+		end
+	end
+	return parts
+end
+
+Rig.extra = setmetatable({}, { __mode = "k" })
+
+function Rig.extraOf(mirror)
+	local ex = Rig.extra[mirror]
+	if not ex then
+		ex = {
+			replaced = setmetatable({}, { __mode = "k" }),
+			born = setmetatable({}, { __mode = "k" }),
+			key = setmetatable({}, { __mode = "k" }),
+			bad = {},
+		}
+		Rig.extra[mirror] = ex
+	end
+	return ex
+end
+
+function Rig.locoMap(char)
+	local map = {}
+	local an = char and char:FindFirstChild("Animate")
+	if not an then return map end
+	for _, key in ipairs({ "idle", "walk", "run", "jump", "fall", "climb", "swim", "swimidle" }) do
+		local f = an:FindFirstChild(key)
+		if f then
+			for _, a in ipairs(f:GetDescendants()) do
+				if a:IsA("Animation") then
+					local n = tostring(a.AnimationId):match("%d+")
+					if n then map[n] = key end
+				end
+			end
+		end
+	end
+	return map
+end
+
+function Rig.mirror(char, sAnim, mirror, rep)
+	if not char or not sAnim or not sAnim.Parent then return false end
+	local ex = Rig.extraOf(mirror)
+	local sig = rep and rep.sig or "plain"
+	if ex.sig ~= sig then
+		for k, st in pairs(mirror) do
+			pcall(function() st:Stop(0.1) end)
+			mirror[k] = nil
+		end
+		ex.replaced = setmetatable({}, { __mode = "k" })
+		ex.born = setmetatable({}, { __mode = "k" })
+		ex.key = setmetatable({}, { __mode = "k" })
+		ex.bad = {}
+		ex.sig = sig
+	end
+	local rHum = char:FindFirstChildOfClass("Humanoid")
+	local rAnim = rHum and rHum:FindFirstChildOfClass("Animator")
+	if not rAnim then return false end
+	local okT, tracks = pcall(function() return rAnim:GetPlayingAnimationTracks() end)
+	if not okT or type(tracks) ~= "table" then return false end
+
+	local seen, count = {}, 0
+	local now = os.clock()
+	for _, rt in ipairs(tracks) do
+		local anim = rt.Animation
+		if anim and anim.AnimationId ~= "" then
+			seen[rt] = true
+			local m = mirror[rt]
+			if not m then
+				local useAnim, replaced, key = anim, false, nil
+				if rep and rep.keyOf then
+					key = rep.keyOf(anim)
+					local g = key and rep.get(key)
+					if g then useAnim, replaced = g, true end
+				end
+				local ok, st = pcall(function() return sAnim:LoadAnimation(useAnim) end)
+				if ok and st then
+					if replaced then
+						ex.replaced[rt] = true
+						ex.born[rt] = now
+						ex.key[rt] = key
+					end
+					m = st
+					mirror[rt] = st
+					pcall(function()
+						st.Priority = rt.Priority
+						st.Looped = rt.Looped
+						st:Play(0.1, math.max(rt.WeightCurrent, 0.01), rt.Speed)
+					end)
+				end
+			end
+			if m and ex.replaced[rt] then
+				local okL, len = pcall(function() return m.Length end)
+				if okL and len == 0 and now - (ex.born[rt] or now) > 2.5 then
+					if ex.key[rt] then ex.bad[ex.key[rt]] = true end
+					ex.replaced[rt] = nil
+					pcall(function() m:Stop(0.1) end)
+					mirror[rt] = nil
+					m = nil
+				end
+			end
+			if m then
+				pcall(function()
+					if not m.IsPlaying then
+						m:Play(0.1, math.max(rt.WeightCurrent, 0.01), rt.Speed)
+					end
+					m.Priority = rt.Priority
+					m.Looped = rt.Looped
+					m:AdjustWeight(math.max(rt.WeightCurrent, 0.01), 0)
+					m:AdjustSpeed(rt.Speed)
+					local len = rt.Length
+					if len and len > 0 and not ex.replaced[rt] then
+						local d = math.abs(m.TimePosition - rt.TimePosition)
+						if rt.Looped then d = math.min(d, len - d) end
+						if d > 0.25 then m.TimePosition = rt.TimePosition end
+					end
+				end)
+				count = count + 1
+			end
+		end
+	end
+
+	for rt, st in pairs(mirror) do
+		if not seen[rt] then
+			pcall(function() st:Stop(0.1) end)
+			mirror[rt] = nil
+		end
+	end
+	return count > 0
+end
+
+function Fn.hideReal(char, hidden)
+	local function hide(p)
+		if hidden[p] == nil then hidden[p] = p.Transparency end
+		if p.Transparency ~= 1 then p.Transparency = 1 end
+	end
+	for _, c in ipairs(char:GetChildren()) do
+		if c:IsA("BasePart") and c.Name ~= "HumanoidRootPart" then
+			hide(c)
+		elseif c:IsA("Accoutrement") then
+			for _, d in ipairs(c:GetDescendants()) do
+				if d:IsA("BasePart") then hide(d) end
+			end
+		end
+	end
+end
+
+function Fn.setShellLTM(v)
+	for _, p in ipairs(State.shellParts) do
+		pcall(function() p.LocalTransparencyModifier = v end)
+	end
+end
+
+function Fn.unmount()
+	for _, c in ipairs(State.conns) do pcall(function() c:Disconnect() end) end
+	State.conns = {}
+	if State.shell then
+		pcall(function() State.shell:Destroy() end)
+	end
+	for inst, t in pairs(State.hidden) do
+		if inst.Parent then pcall(function() inst.Transparency = t end) end
+	end
+	State.shell, State.sRoot, State.char = nil, nil, nil
+	State.shellParts, State.hidden, State.pairList = {}, {}, {}
+	State.mirror, State.sAnimator, State.animActive, State.c0Dirty = {}, nil, false, false
+	State.fp = false
+end
+
+function Fn.noCollide()
+	for _, p in ipairs(State.shellParts) do
+		if p.CanCollide then p.CanCollide = false end
+		if p.CanTouch then p.CanTouch = false end
+		if p.CanQuery then p.CanQuery = false end
+	end
+end
+
+function Fn.syncPose()
+	if not State.shell or not State.char or not State.char.Parent then return end
+	if State.animActive then
+		if State.c0Dirty then
+			Rig.reset(State.pairList)
+			State.c0Dirty = false
+		end
+		return
+	end
+	Rig.pose(State.pairList)
+	State.c0Dirty = true
+end
+
+function Fn.onStep()
+	local shell, char, sRoot = State.shell, State.char, State.sRoot
+	if not shell or not char or not sRoot or not char.Parent then return end
+	local hrp = char:FindFirstChild("HumanoidRootPart")
+	if not hrp then return end
+
+	local want = workspace.CurrentCamera or workspace
+	if shell.Parent ~= want then shell.Parent = want end
+
+	for inst in pairs(State.hidden) do
+		if inst.Parent and inst.Transparency ~= 1 then inst.Transparency = 1 end
+	end
+
+	Fn.noCollide()
+
+	sRoot.CFrame = hrp.CFrame * State.offset
+
+	State.animActive = Rig.mirror(char, State.sAnimator, State.mirror, nil)
+	Fn.syncPose()
+
+	local now = os.clock()
+	if now - State.lastScan > 0.3 then
+		State.lastScan = now
+		Fn.hideReal(char, State.hidden)
+	end
+
+	local cam = workspace.CurrentCamera
+	local head = char:FindFirstChild("Head")
+	if cam and head then
+		local fp = (cam.CFrame.Position - head.Position).Magnitude < 1.6
+		if fp ~= State.fp then
+			State.fp = fp
+			Fn.setShellLTM(fp and 1 or 0)
+		end
+	end
+end
+
+function Fn.mount(char, hum, template)
+	Fn.unmount()
+	local hrp = char:FindFirstChild("HumanoidRootPart")
+	if not hrp then return false, L("noCharMsg") end
+
+	local shell = template:Clone()
+	shell.Name = SHELL_NAME
+	local sRoot = shell:FindFirstChild("HumanoidRootPart")
+	if not sRoot then
+		shell:Destroy()
+		return false, L("noShellRootMsg")
+	end
+
+	local sAnimator = Rig.animator(shell)
+	local list = Rig.pairs(char, shell)
+
+	State.offset = Rig.offset(char, shell)
+	sRoot.Anchored = true
+	shell.PrimaryPart = sRoot
+	shell:PivotTo(hrp.CFrame * State.offset)
+
+	local parts = Rig.parts(shell)
+
+	State.shell, State.sRoot, State.char = shell, sRoot, char
+	State.sAnimator, State.mirror, State.animActive, State.c0Dirty = sAnimator, {}, false, false
+	State.shellParts, State.pairList = parts, list
+	State.fp = false
+	shell.Parent = workspace.CurrentCamera or workspace
+
+	Fn.hideReal(char, State.hidden)
+	State.lastScan = os.clock()
+	State.conns[#State.conns + 1] = RunService.RenderStepped:Connect(Fn.onStep)
+	State.conns[#State.conns + 1] = RunService.Stepped:Connect(function()
+		Fn.noCollide()
+		Fn.syncPose()
+	end)
+	State.conns[#State.conns + 1] = RunService.Heartbeat:Connect(function()
+		Fn.noCollide()
+		Fn.syncPose()
+	end)
+	return true
+end
+
+function Fn.verifyShell(char)
+	local missing = {}
+	local shell = State.shell
+	if not shell then return { "sin modelo" } end
+	for _, c in ipairs(char:GetChildren()) do
+		if c:IsA("BasePart") and Fn.STD_PARTS[c.Name] and not shell:FindFirstChild(c.Name) then
+			missing[#missing + 1] = c.Name
+		end
+	end
+	if #State.pairList == 0 then missing[#missing + 1] = "uniones" end
+	return missing
+end
+
+function Fn.ensureDescriptionAccessories(template, desc)
+	if not template or not desc then return 0 end
+	local okList, accessories = pcall(function() return desc:GetAccessories(true) end)
+	if not okList or type(accessories) ~= "table" or #accessories == 0 then return 0 end
+
+	local hum = template:FindFirstChildOfClass("Humanoid")
+	if not hum then return 0 end
+
+	local present = {}
+	for _, item in ipairs(template:GetDescendants()) do
+		if item:IsA("Accessory") then present[item.Name] = true end
+	end
+
+	local added = 0
+	for _, info in ipairs(accessories) do
+		local assetId = tonumber(info.AssetId)
+		if assetId and assetId > 0 then
+			local loaded = Fn.loadAsset(assetId)
+			local accessory = Fn.findClass(loaded, "Accessory")
+			if accessory then
+				if not present[accessory.Name] then
+					local wrap = accessory:FindFirstChildWhichIsA("WrapLayer", true)
+					if wrap then
+						if info.Order ~= nil then pcall(function() wrap.Order = info.Order end) end
+						if info.Puffiness ~= nil then pcall(function() wrap.Puffiness = info.Puffiness end) end
+					end
+					local okAdd = pcall(function() hum:AddAccessory(accessory) end)
+					if not okAdd or accessory.Parent ~= template then
+						pcall(function() Fn.attachByAttachments(template, accessory) end)
+					end
+					present[accessory.Name] = true
+					added = added + 1
+				else
+					pcall(function() accessory:Destroy() end)
+				end
+			end
+			if loaded and loaded ~= accessory then pcall(function() loaded:Destroy() end) end
+		end
+	end
+	return added
+end
+
+function Fn.buildTemplate(desc, rig, char)
+	local template, mode = Fn.templateFromDescription(desc, rig), "model"
+	if template then
+		local okAcc, expected = pcall(function() return desc:GetAccessories(true) end)
+		local actual = 0
+		for _, item in ipairs(template:GetDescendants()) do
+			if item:IsA("Accessory") then actual = actual + 1 end
+		end
+		if okAcc and type(expected) == "table" and actual < #expected then
+			Fn.ensureDescriptionAccessories(template, desc)
+		end
+	end
+	if not template then
+		template, mode = Fn.templateFromAssets(desc, char), "assets"
+		if template then Fn.ensureDescriptionAccessories(template, desc) end
+	end
+	if not template then return nil end
+
+	Fn.prepShell(template)
+	Fn.preload(template)
+	return template, mode
+end
+
+function Fn.evictBuilds()
+	while #BuildOrder > Fn.MAX_BUILDS do
+		local victim
+		for i, id in ipairs(BuildOrder) do
+			local b = Build[id]
+			if b and b.state ~= "building" and b.template ~= State.template then
+				victim = i
+				break
+			end
+		end
+		if not victim then return end
+		local id = table.remove(BuildOrder, victim)
+		local b = Build[id]
+		Build[id] = nil
+		if b and b.template then pcall(function() b.template:Destroy() end) end
+	end
+end
+
+function Fn.ensureBuild(entry)
+	local char = LocalPlayer.Character
+	local hum = char and char:FindFirstChildOfClass("Humanoid")
+	if not hum then return nil end
+	local rig = hum.RigType
+
+	local b = Build[entry.id]
+	if b and b.rig == rig and b.state ~= "failed" then return b end
+	if b then
+		local i = table.find(BuildOrder, entry.id)
+		if i then table.remove(BuildOrder, i) end
+		if b.template and b.template ~= State.template then
+			pcall(function() b.template:Destroy() end)
+		end
+	end
+
+	b = { state = "building", rig = rig }
+	Build[entry.id] = b
+	BuildOrder[#BuildOrder + 1] = entry.id
+
+	task.spawn(function()
+		local ok, t, mode = pcall(Fn.buildTemplate, entry.desc, rig, char)
+		if ok and t then
+			b.template, b.mode, b.state = t, mode, "ready"
+		else
+			b.state = "failed"
+		end
+		Fn.evictBuilds()
+	end)
+	return b
+end
+
+local All = { on = false, announce = false }
+local Assign = {}
+local GH = { run = true, ghosts = {} }
+
+function UI.entryFor(uid)
+	uid = tonumber(uid)
+	if not uid then return nil end
+	if uid == LocalPlayer.UserId then return State.copyEntry end
+	local a = Assign[uid]
+	if a then return a end
+	if All.on and current and Players.GetPlayerByUserId(Players, uid) then return current end
+	return nil
+end
+
+do
+	local ghosts, tpls = GH.ghosts, {}
+
+	local function unmountG(plr)
+		local g = ghosts[plr]
+		if not g then return end
+		ghosts[plr] = nil
+		if g.shell then pcall(function() g.shell:Destroy() end) end
+		for inst, t in pairs(g.hidden) do
+			if inst.Parent then pcall(function() inst.Transparency = t end) end
+		end
+	end
+
+	local function mountG(plr, template, entry)
+		local char = plr.Character
+		local hrp = char and char:FindFirstChild("HumanoidRootPart")
+		if not hrp then return false end
+		unmountG(plr)
+
+		local shell = template:Clone()
+		shell.Name = SHELL_NAME
+		local sRoot = shell:FindFirstChild("HumanoidRootPart")
+		if not sRoot then
+			shell:Destroy()
+			return false
+		end
+
+		local g = {
+			char = char, shell = shell, sRoot = sRoot, entryId = entry.id, entry = entry,
+			list = Rig.pairs(char, shell), offset = Rig.offset(char, shell),
+			hidden = {}, scan = os.clock(), mirror = {}, animActive = false, c0Dirty = false,
+			sAnimator = Rig.animator(shell),
+		}
+		sRoot.Anchored = true
+		shell.PrimaryPart = sRoot
+		shell:PivotTo(hrp.CFrame * g.offset)
+		Rig.parts(shell)
+
+		ghosts[plr] = g
+		shell.Parent = workspace.CurrentCamera or workspace
+		Fn.hideReal(char, g.hidden)
+
+		if All.announce and All.on then
+			All.announce = false
+			Fn.setStatus(L("setOthersMsg"), T.green)
+		end
+		if GH.onMounted then pcall(GH.onMounted, plr, entry) end
+		return true
+	end
+
+	local function stepG()
+		if next(ghosts) == nil then return end
+		local want = workspace.CurrentCamera or workspace
+		local now = os.clock()
+		for plr, g in pairs(ghosts) do
+			local char = g.char
+			local hrp = char and char.Parent and char:FindFirstChild("HumanoidRootPart")
+			if not hrp or plr.Character ~= char then
+				unmountG(plr)
+			else
+				if g.shell.Parent ~= want then
+					pcall(function() g.shell.Parent = want end)
+				end
+				for inst in pairs(g.hidden) do
+					if inst.Parent and inst.Transparency ~= 1 then inst.Transparency = 1 end
+				end
+				g.sRoot.CFrame = hrp.CFrame * g.offset
+				g.animActive = Rig.mirror(char, g.sAnimator, g.mirror, nil)
+				if g.animActive then
+					if g.c0Dirty then
+						Rig.reset(g.list)
+						g.c0Dirty = false
+					end
+				else
+					Rig.pose(g.list)
+					g.c0Dirty = true
+				end
+				if now - g.scan > 0.3 then
+					g.scan = now
+					Fn.hideReal(char, g.hidden)
+				end
+			end
+		end
+	end
+	track(RunService.RenderStepped:Connect(stepG))
+
+	local function evictT()
+		local n = 0
+		for _ in pairs(tpls) do n = n + 1 end
+		while n > 8 do
+			local vk, vu
+			for k, t in pairs(tpls) do
+				if t.state ~= "building" and (not vu or t.used < vu) then vk, vu = k, t.used end
+			end
+			if not vk then return end
+			local t = tpls[vk]
+			tpls[vk] = nil
+			if t.model then pcall(function() t.model:Destroy() end) end
+			n = n - 1
+		end
+	end
+
+	local function templateFor(entry, rig)
+		local key = tostring(entry.id) .. ":" .. tostring(rig)
+		local t = tpls[key]
+		if t then
+			t.used = os.clock()
+			if t.state == "ready" then return t.model end
+			if t.state == "failed" and os.clock() - t.time > 6 then
+				tpls[key] = nil
+			else
+				return nil
+			end
+		end
+		t = { state = "building", time = os.clock(), used = os.clock() }
+		tpls[key] = t
+		task.spawn(function()
+			local m = Fn.templateFromDescription(entry.desc, rig)
+			if m and GH.run then
+				Fn.prepShell(m)
+				Fn.preload(m)
+				t.model, t.state = m, "ready"
+			else
+				if m then pcall(function() m:Destroy() end) end
+				t.state, t.time = "failed", os.clock()
+				Fn.setStatus(L("noAvatarShellFor") .. tostring(entry.name) .. ".", T.warn)
+			end
+		end)
+		evictT()
+		return nil
+	end
+
+	local function ensure(plr)
+		if plr == LocalPlayer then return end
+		local entry = UI.entryFor(plr.UserId)
+		local g = ghosts[plr]
+		if not entry then
+			if g then unmountG(plr) end
+			return
+		end
+		local char = plr.Character
+		local hum = char and char:FindFirstChildOfClass("Humanoid")
+		local hrp = char and char:FindFirstChild("HumanoidRootPart")
+		if not hum or not hrp then return end
+		if g and g.char == char and g.entryId == entry.id and g.shell.Parent then return end
+		local tpl = templateFor(entry, hum.RigType)
+		if not tpl then return end
+		pcall(mountG, plr, tpl, entry)
+	end
+
+	GH.unmount = unmountG
+	GH.ensure = ensure
+
+	function GH.ensureAll()
+		for _, p in ipairs(Players:GetPlayers()) do ensure(p) end
+	end
+
+	function GH.shutdown()
+		GH.run = false
+		for plr in pairs(ghosts) do unmountG(plr) end
+		for k, t in pairs(tpls) do
+			if t.model then pcall(function() t.model:Destroy() end) end
+			tpls[k] = nil
+		end
+	end
+
+	local function hookPlayer(plr)
+		if plr == LocalPlayer then return end
+		track(plr.CharacterAdded:Connect(function()
+			unmountG(plr)
+		end))
+	end
+	for _, p in ipairs(Players:GetPlayers()) do hookPlayer(p) end
+	track(Players.PlayerAdded:Connect(hookPlayer))
+	track(Players.PlayerRemoving:Connect(function(p)
+		unmountG(p)
+	end))
+
+	task.spawn(function()
+		while GH.run do
+			GH.ensureAll()
+			task.wait(0.5)
+		end
+	end)
+end
+
+function Fn.setAll(v)
+	if v then
+		if not current then
+			Fn.setStatus(L("firstSearchMsg"), T.warn)
+			return
+		end
+		All.on = true
+		All.announce = true
+		btnAll.label.Text = L("allOn")
+		btnAll.setStyle("green")
+		Fn.setStatus(L("loadingOthersMsg"), IC.soft)
+		if UI.AllSync then UI.AllSync() end
+		GH.ensureAll()
+	else
+		All.on = false
+		All.announce = false
+		btnAll.label.Text = L("allOff")
+		btnAll.setStyle("dark")
+		GH.ensureAll()
+		if UI.AllSync then UI.AllSync() end
+		Fn.setStatus(L("originalsMsg"), IC.soft)
+	end
+end
+
+function UI.searchRun(text)
+	Fn.setStatus(L("searchingMsg"), IC.soft)
+	Fn.setProgress(0.2)
+	local id, name = Fn.resolveUser(text)
+	if not id then
+		Fn.setStatus(name, T.red)
+		Fn.setProgress(0)
+		busy = false
+		return false
+	end
+
+	pendingId = id
+	preview.Image = ""
+	preview.ImageTransparency = 0
+	previewHint.Text = L("loadingMsg")
+	previewHint.Visible = true
+	task.spawn(function()
+		local img = Fn.getThumb(id, Enum.ThumbnailType.AvatarThumbnail, Enum.ThumbnailSize.Size420x420)
+		if pendingId == id then
+			if img then
+				preview.ImageTransparency = 1
+				preview.Image = img
+				tween(preview, TweenInfo.new(0.25, Enum.EasingStyle.Quad), { ImageTransparency = 0 })
+			else
+				preview.Image = ""
+			end
+			previewHint.Text = L("noProfile")
+			previewHint.Visible = not img
+		end
+	end)
+
+	local desc
+	for _ = 1, 3 do
+		local ok, d = pcall(Players.GetHumanoidDescriptionFromUserId, Players, id)
+		if ok and d then
+			desc = d
+			break
+		end
+		task.wait(0.3)
+	end
+	if not desc then
+		Fn.setStatus(L("noAvatarMsg"), T.red)
+		Fn.setProgress(0)
+		busy = false
+		return false
+	end
+
+	local display = name
+	do
+		local okI, infos = pcall(function()
+			return game:GetService("UserService"):GetUserInfosByUserIdsAsync({ id })
+		end)
+		local inf = okI and type(infos) == "table" and infos[1]
+		if inf and type(inf.DisplayName) == "string" and inf.DisplayName ~= "" then
+			display = inf.DisplayName
+		end
+	end
+	current = { id = id, name = name, display = display, desc = desc }
+	do
+		local function esc(t) return (t:gsub("&", "&amp;"):gsub("<", "&lt;"):gsub(">", "&gt;")) end
+		nameLabel.Text = esc(display) .. '\n<font color="rgb(176,168,152)" size="11">@' .. esc(name) .. "</font>"
+	end
+	idLabel.Text = "ID: " .. tostring(id)
+	Fn.setStatus(L("readyMsg"), T.green)
+	Fn.setProgress(1)
+	task.delay(0.6, function() Fn.setProgress(0) end)
+
+	if All.on then
+		All.announce = true
+		if UI.AllSync then UI.AllSync() end
+	end
+
+	Fn.ensureBuild(current)
+
+	busy = false
+	return true
+end
+
+function Fn.search(text)
+	if busy then return false end
+	busy = true
+	local ok, res = pcall(UI.searchRun, text)
+	busy = false
+	if not ok then
+		Fn.setStatus("Error: " .. tostring(res), T.red)
+		Fn.setProgress(0)
+		return false
+	end
+	return res
+end
+
+function Fn.applyAvatar(entry)
+	local char = LocalPlayer.Character
+	local hum = char and char:FindFirstChildOfClass("Humanoid")
+	local hrp = char and char:FindFirstChild("HumanoidRootPart")
+	if not hum or not hrp then return false, L("noCharMsg") end
+	local rig = hum.RigType
+
+	local b = Fn.ensureBuild(entry)
+	if not b then return false, L("noCharMsg") end
+
+	if b.state == "building" then
+		Fn.setStatus(L("loadingMsg"), IC.soft)
+		local t0 = os.clock()
+		while b.state == "building" do
+			Fn.setProgress(math.min(0.85, 0.15 + (os.clock() - t0) / 20))
+			task.wait(0.1)
+		end
+	end
+	if b.state ~= "ready" or not b.template then
+		Build[entry.id] = nil
+		local i = table.find(BuildOrder, entry.id)
+		if i then table.remove(BuildOrder, i) end
+		return false, L("noAvatarShell")
+	end
+	local template, mode = b.template, b.mode
+	Fn.setProgress(0.9)
+
+	char = LocalPlayer.Character
+	hum = char and char:FindFirstChildOfClass("Humanoid")
+	hrp = char and char:FindFirstChild("HumanoidRootPart")
+	if not hum or not hrp then return false, L("charChangedMsg") end
+
+	State.template = template
+
+	Fn.setStatus(L("applyingMsg"), IC.soft)
+
+	local ok, err = Fn.mount(char, hum, template)
+	if not ok then return false, tostring(err) end
+	State.copyEntry = entry
+
+	Fn.setProgress(1)
+	task.delay(0.6, function() Fn.setProgress(0) end)
+
+	local note = ""
+	if rig ~= Enum.HumanoidRigType.R15 then note = note .. " | R6" end
+	if mode == "assets" then note = note .. " | basico" end
+	local missing = Fn.verifyShell(char)
+	if #missing > 0 then
+		note = note .. " | " .. #missing .. " avisos"
+	end
+	return true, note
+end
+
+function Fn.restoreAvatar()
+	Fn.unmount()
+	State.template, State.copyEntry = nil, nil
+end
+
+function Fn.copyCurrent()
+	if applying then return end
+	if not current then Fn.setStatus(L("firstSearchMsg"), T.warn) return end
+	applying = true
+	local cur = current
+	Fn.setStatus(L("copyingMsg"), IC.soft)
+	local ok, success, info = pcall(Fn.applyAvatar, cur)
+	if not ok then
+		Fn.setStatus("Error: " .. tostring(success), T.red)
+		Fn.setProgress(0)
+	elseif success then
+		Fn.setStatus(L("copiedMsg") .. cur.name .. info, T.green)
+		if UI.AllSync then UI.AllSync() end
+	else
+		Fn.setStatus(tostring(info), T.red)
+		Fn.setProgress(0)
+	end
+	applying = false
+end
+
+track(LocalPlayer.CharacterAdded:Connect(function(char)
+	Fn.unmount()
+	local hum = char:WaitForChild("Humanoid", 15)
+	if not hum then return end
+	local hrp = char:WaitForChild("HumanoidRootPart", 15)
+	if not hrp then return end
+	char:WaitForChild("Animate", 4)
+	task.wait(0.4)
+	if LocalPlayer.Character ~= char or not State.template then return end
+	while applying do task.wait(0.2) end
+	local th = State.template:FindFirstChildOfClass("Humanoid")
+	if not th or th.RigType ~= hum.RigType then return end
+	local ok = Fn.mount(char, hum, State.template)
+	if ok then
+		Fn.setStatus(L("reappliedMsg"), T.green)
+	end
+end))
+
+do
+	local GuiService = game:GetService("GuiService")
+	local StarterGui = game:GetService("StarterGui")
+	local H = { run = true, hooked = {}, lastKey = "", lastT = 0, recent = {} }
+	UI.InspectHook = H
+	local DEBUG = false
+	local hasCC = type(checkcaller) == "function"
+
+	local function note(text)
+		if not DEBUG then return end
+		task.defer(function()
+			pcall(function()
+				StarterGui:SetCore("SendNotification", { Title = "Perfil", Text = text, Duration = 5 })
+			end)
+		end)
+	end
+
+	local function report(method, arg1, redirected)
+		local key = method .. tostring(arg1)
+		local now = os.clock()
+		if key == H.lastKey and now - H.lastT < 0.5 then return end
+		H.lastKey, H.lastT = key, now
+		note(method .. " -> " .. tostring(arg1) .. (redirected and " (cambiado)" or " (sin cambio)"))
+	end
+
+	function H.nameOf(uid)
+		if uid == LocalPlayer.UserId then return LocalPlayer.Name end
+		local p = Players:GetPlayerByUserId(uid)
+		return p and p.Name
+	end
+
+	function H.showFor(uid, e)
+		e = e or UI.entryFor(uid)
+		if not (e and e.id ~= uid) then return false end
+		H.lastShow = os.clock()
+		H.recent[e.id] = os.clock()
+		if H.origUid then
+			local ok = pcall(H.origUid, GuiService, e.id)
+			if ok then return true end
+		end
+		local nm = e.name
+		if not (e.desc and nm) then return false end
+		local okC, desc = pcall(function() return e.desc:Clone() end)
+		if not okC or not desc then desc = e.desc end
+		local f = H.origDesc or function(_, d, n)
+			GuiService:InspectPlayerFromHumanoidDescription(d, n)
+		end
+		return pcall(f, GuiService, desc, nm)
+	end
+
+	function H.showOwn(ce)
+		return H.showFor(LocalPlayer.UserId, ce)
+	end
+
+	function H.ownInspect(method, ...)
+		if method == "InspectPlayerFromHumanoidDescription" then return false end
+		local uid = tonumber((...))
+		if not uid then return false end
+		return H.showFor(uid)
+	end
+
+	local function entryForName(name)
+		if type(name) ~= "string" then return nil end
+		if name == LocalPlayer.Name or name == LocalPlayer.DisplayName then
+			return State.copyEntry
+		end
+		for _, p in ipairs(Players.GetPlayers(Players)) do
+			if p.Name == name or p.DisplayName == name then
+				return UI.entryFor(p.UserId)
+			end
+		end
+		return nil
+	end
+
+	local function handle(method, args)
+		if not H.run then return false end
+		if method == "InspectPlayerFromHumanoidDescription" then
+			local e = entryForName(args[2])
+			report(method, args[2], e ~= nil)
+			if e then
+				args[1] = e.desc
+				if args[2] ~= LocalPlayer.Name and args[2] ~= LocalPlayer.DisplayName then
+					args[2] = e.display or e.name
+				end
+				return true
+			end
+			return false
+		end
+		local uid = tonumber(args[1])
+		if not uid then return false end
+		local now = os.clock()
+		local rc = H.recent[uid]
+		if rc and now - rc < 0.4 then return false end
+		local e = UI.entryFor(uid)
+		report(method, uid, e ~= nil)
+		if e and e.id ~= uid then
+			H.recent[e.id] = now
+			args[1] = e.id
+			return true
+		end
+		return false
+	end
+
+	local function handlePlayers(method, args)
+		if not H.run then return false end
+		local uid = tonumber(args[1])
+		if not uid then return false end
+		local e = UI.entryFor(uid)
+		if e and e.id ~= uid then
+			args[1] = e.id
+			return true
+		end
+		return false
+	end
+
+	local function rewriteUrl(url)
+		local out = url:gsub("(/users/)(%d+)(/[%a%-]+)", function(a, id, suffix)
+			if suffix == "/avatar" or suffix == "/currently-wearing" then
+				local e = UI.entryFor(id)
+				if e and e.id ~= tonumber(id) then return a .. tostring(e.id) .. suffix end
+			end
+			return nil
+		end)
+		return out
+	end
+
+	local function hookPlayersNameCalls()
+		pcall(function()
+			local old
+			old = hookfunction(Players.GetNameFromUserIdAsync, newcclosure(function(self, userId, ...)
+				if H.run and State.copyEntry and userId == LocalPlayer.UserId
+					and not (hasCC and checkcaller()) then
+					return State.copyEntry.name
+				end
+				return old(self, userId, ...)
+			end))
+		end)
+		pcall(function()
+			local old
+			old = hookfunction(Players.GetUserIdFromNameAsync, newcclosure(function(self, name, ...)
+				if H.run and State.copyEntry and not (hasCC and checkcaller())
+					and (name == LocalPlayer.Name or name == LocalPlayer.DisplayName) then
+					return State.copyEntry.id
+				end
+				return old(self, name, ...)
+			end))
+		end)
+	end
+	hookPlayersNameCalls()
+
+	local METHODS = {
+		"InspectPlayerFromUserId",
+		"InspectPlayerFromUserIdWithCtx",
+		"InspectPlayerFromHumanoidDescription",
+	}
+
+	for _, name in ipairs(METHODS) do
+		pcall(function()
+			local fn = GuiService[name]
+			local old
+			old = hookfunction(fn, newcclosure(function(self, ...)
+				if self == GuiService and H.run then
+					if H.ownInspect(name, ...) then return end
+					local n = select("#", ...)
+					local args = { ... }
+					local okH, changed = pcall(handle, name, args)
+					if okH and changed then
+						return old(self, table.unpack(args, 1, n))
+					end
+				end
+				return old(self, ...)
+			end))
+			if name == "InspectPlayerFromHumanoidDescription" then H.origDesc = old end
+			if name == "InspectPlayerFromUserId" then H.origUid = old end
+			H.hooked[name] = true
+		end)
+	end
+
+	do
+		local lastEvt = 0
+		for _, evName in ipairs({ "InspectPlayerFromUserIdWithCtxRequest", "InspectPlayerFromUserIdRequest" }) do
+			pcall(function()
+				local sig = GuiService[evName]
+				track(sig:Connect(function(uid)
+					uid = tonumber(uid)
+					if not H.run or not uid then return end
+					local e = UI.entryFor(uid)
+					if not e or e.id == uid then return end
+					local now = os.clock()
+					if now - lastEvt < 0.6 or now - (H.lastShow or 0) < 0.6 then return end
+					lastEvt = now
+					task.defer(function()
+						pcall(function() GuiService:CloseInspectMenu() end)
+						task.wait(0.15)
+						H.showFor(uid, e)
+					end)
+				end))
+				H.hooked["ev_" .. evName] = true
+			end)
+		end
+	end
+
+	local NC = {
+		InspectPlayerFromUserId = "gui",
+		InspectPlayerFromUserIdWithCtx = "gui",
+		InspectPlayerFromHumanoidDescription = "gui",
+		GetHumanoidDescriptionFromUserId = "pl",
+		GetCharacterAppearanceInfoAsync = "pl",
+		GetCharacterAppearanceAsync = "pl",
+	}
+	pcall(function()
+		local old
+		old = hookmetamethod(game, "__namecall", newcclosure(function(self, ...)
+			local m = getnamecallmethod()
+			local kind = NC[m]
+			if kind and H.run then
+				local go = false
+				if kind == "gui" then
+					go = self == GuiService
+				elseif self == Players and hasCC then
+					go = not checkcaller()
+				end
+				if go then
+					if kind == "gui" and H.ownInspect(m, ...) then return end
+					local n = select("#", ...)
+					local args = { ... }
+					local okH, changed
+					if kind == "gui" then
+						okH, changed = pcall(handle, m, args)
+					else
+						okH, changed = pcall(handlePlayers, m, args)
+					end
+					if setnamecallmethod then setnamecallmethod(m) end
+					if okH and changed then
+						return old(self, table.unpack(args, 1, n))
+					end
+				end
+			end
+			return old(self, ...)
+		end))
+		H.hooked.namecall = true
+	end)
+
+	if hasCC then
+		pcall(function()
+			local fn = HttpService.RequestInternal
+			local old
+			old = hookfunction(fn, newcclosure(function(self, opts, ...)
+				if H.run and type(opts) == "table" and not checkcaller() then
+					local url = opts.Url
+					if type(url) == "string" and url:find("avatar", 1, true) then
+						local localIdStr = tostring(LocalPlayer.UserId)
+						if State.copyEntry and url:find(localIdStr, 1, true) then
+							local ce = State.copyEntry
+							local newUrl = url:gsub(localIdStr, tostring(ce.id))
+							if newUrl ~= url then
+								local copy = {}
+								for k, v in pairs(opts) do copy[k] = v end
+								copy.Url = newUrl
+								return old(self, copy, ...)
+							end
+						end
+						local okR, new = pcall(rewriteUrl, url)
+						if okR and type(new) == "string" and new ~= url then
+							local copy = {}
+							for k, v in pairs(opts) do copy[k] = v end
+							copy.Url = new
+							return old(self, copy, ...)
+						end
+					end
+				end
+				return old(self, opts, ...)
+			end))
+			H.hooked.http = true
+		end)
+	end
+
+	local function rewriteThumbUrl(img)
+		if type(img) ~= "string" or img == "" then return nil end
+		local localIdStr = tostring(LocalPlayer.UserId)
+		if not img:find(localIdStr, 1, true) then return nil end
+		if not State.copyEntry then return nil end
+		local newImg = img:gsub(localIdStr, tostring(State.copyEntry.id))
+		if newImg ~= img then return newImg end
+		return nil
+	end
+
+	task.spawn(function()
+		while H.run do
+			task.wait(1)
+			if not H.run then break end
+			if State.copyEntry then
+				local function scanGui(root)
+					if not root then return end
+					local ok, list = pcall(function() return root:GetDescendants() end)
+					if not ok then return end
+					for _, d in ipairs(list) do
+						if (d:IsA("ImageLabel") or d:IsA("ImageButton")) and not d:IsDescendantOf(gui) then
+							local repl = rewriteThumbUrl(d.Image)
+							if repl then
+								pcall(function() d.Image = repl end)
+							end
+						end
+					end
+				end
+				pcall(scanGui, LocalPlayer:FindFirstChildOfClass("PlayerGui"))
+				local okCG, cg = pcall(function() return game:GetService("CoreGui") end)
+				if okCG and cg then pcall(scanGui, cg) end
+			end
+		end
+	end)
+
+	if next(H.hooked) == nil then
+		task.defer(function()
+			Fn.setStatus(L("noHookMsg"), T.warn)
+		end)
+	end
+end
+
+local activeTab = "saved"
+
+function Fn.indexOf(list, id)
+	for i, e in ipairs(list) do
+		if e.id == id then return i end
+	end
+end
+
+function Fn.addTo(listName)
+	if not current then Fn.setStatus(L("firstSearchMsg"), T.warn) return end
+	local list = data[listName]
+	if Fn.indexOf(list, current.id) then
+		Fn.setStatus(listName == "saved" and L("alreadySavedMsg") or L("alreadyFavsMsg"), T.warn)
+		return
+	end
+	table.insert(list, { id = current.id, name = current.name, display = current.display })
+	Fn.saveData()
+	Fn.refreshList()
+	Fn.setStatus((listName == "saved" and L("savedMsg") or L("favMsg")) .. current.name, T.green)
+end
+
+function Fn.removeFrom(listName, id)
+	local i = Fn.indexOf(data[listName], id)
+	if i then
+		table.remove(data[listName], i)
+		Fn.saveData()
+		Fn.refreshList()
+		Fn.setStatus(L("removedMsg"), IC.soft)
+	end
+end
+
+function Fn.confirmRemove(listName, entry)
+	Modal.show({
+		title = L("deleteTitle"),
+		text = "Se eliminara " .. entry.name .. " de " .. (listName == "saved" and "tus guardados." or "tus favoritos."),
+		leftText = L("modalBack"), leftStyle = "dark",
+		rightText = L("modalDelete"), rightStyle = "danger",
+		onRight = function() Fn.removeFrom(listName, entry.id) end,
+	})
+end
+
+function Fn.useEntry(entry)
+	if Fn.search(tostring(entry.id)) then Fn.copyCurrent() end
+end
+
+local ROW_W = 300
+
+function Fn.buildRow(entry, listName, order)
+	local row = new("Frame", {
+		Parent = listFrame, Size = UDim2.fromOffset(ROW_W, 42), BackgroundColor3 = IC.btnBg,
+		BackgroundTransparency = 0.35, BorderSizePixel = 0, LayoutOrder = order,
+	})
+	corner(row, 4)
+	stroke(row, IC.btnLine, 1, 0.7)
+
+	local thumb = new("ImageLabel", {
+		Parent = row, Position = UDim2.fromOffset(6, 6), Size = UDim2.fromOffset(30, 30),
+		BackgroundColor3 = IC.btnBg, BorderSizePixel = 0, Image = "", ImageTransparency = 1,
+		ScaleType = Enum.ScaleType.Crop,
+	})
+	corner(thumb, 15)
+	stroke(thumb, IC.gold, 1, 0.5)
+	local cachedThumb = thumbCache[entry.id]
+	if cachedThumb then
+		thumb.Image = cachedThumb
+		thumb.ImageTransparency = 0
+	else
+		task.spawn(function()
+			local c = Fn.headThumb(entry.id)
+			if c and thumb.Parent then
+				thumb.Image = c
+				tween(thumb, TweenInfo.new(0.2, Enum.EasingStyle.Quad), { ImageTransparency = 0 })
+			end
+		end)
+	end
+
+	local btnsW = listName == "saved" and 110 or 78
+	local nameW = ROW_W - 44 - btnsW - 10
+	new("TextLabel", {
+		Parent = row, Position = UDim2.fromOffset(44, 5), Size = UDim2.fromOffset(nameW, 18),
+		BackgroundTransparency = 1,
+		Text = (entry.display and entry.display ~= entry.name) and (entry.display .. " (@" .. entry.name .. ")") or entry.name,
+		Font = Enum.Font.GothamBold, TextSize = 12,
+		TextColor3 = IC.title, TextXAlignment = Enum.TextXAlignment.Left, TextTruncate = Enum.TextTruncate.AtEnd,
+	})
+	new("TextLabel", {
+		Parent = row, Position = UDim2.fromOffset(44, 22), Size = UDim2.fromOffset(nameW, 14),
+		BackgroundTransparency = 1, Text = tostring(entry.id), Font = Enum.Font.Gotham, TextSize = 10,
+		TextColor3 = IC.soft, TextXAlignment = Enum.TextXAlignment.Left, TextTruncate = Enum.TextTruncate.AtEnd,
+	})
+
+	local box = new("Frame", {
+		Parent = row, AnchorPoint = Vector2.new(1, 0.5), Position = UDim2.new(1, -6, 0.5, 0),
+		Size = UDim2.fromOffset(btnsW, 28), BackgroundTransparency = 1,
+	})
+	new("UIListLayout", {
+		Parent = box, FillDirection = Enum.FillDirection.Horizontal, Padding = UDim.new(0, 4),
+		HorizontalAlignment = Enum.HorizontalAlignment.Right, VerticalAlignment = Enum.VerticalAlignment.Center,
+		SortOrder = Enum.SortOrder.LayoutOrder,
+	})
+
+	local use = UI.button({
+		parent = box, text = L("usePut"), size = UDim2.fromOffset(46, 28), style = "main",
+		textSize = 11, order = 1, radius = 4,
+	})
+	use.btn.MouseButton1Click:Connect(function() task.spawn(Fn.useEntry, entry) end)
+
+	if listName == "saved" then
+		local inFavs = Fn.indexOf(data.favs, entry.id) ~= nil
+		local fav = UI.button({
+			parent = box, icon = "star", iconSize = 15, size = UDim2.fromOffset(28, 28),
+			style = "dark", order = 2, radius = 4,
+		})
+		fav.icon.set(inFavs and T.warn or IC.soft)
+		fav.btn.MouseButton1Click:Connect(function()
+			if Fn.indexOf(data.favs, entry.id) then
+				Fn.setStatus(L("alreadyFavsMsg"), T.warn)
+			else
+				table.insert(data.favs, { id = entry.id, name = entry.name, display = entry.display })
+				Fn.saveData()
+				Fn.refreshList()
+				Fn.setStatus(L("favMsg") .. entry.name, T.green)
+			end
+		end)
+	end
+
+	local del = UI.button({
+		parent = box, icon = "trash", iconSize = 16, size = UDim2.fromOffset(28, 28),
+		style = "danger", iconColor = T.red, iconHover = WHITE, order = 3, radius = 4,
+	})
+	del.btn.MouseButton1Click:Connect(function() Fn.confirmRemove(listName, entry) end)
+end
+
+function Fn.refreshList()
+	for _, c in ipairs(listFrame:GetChildren()) do
+		if c:IsA("Frame") or c:IsA("TextLabel") then c:Destroy() end
+	end
+	local list = data[activeTab]
+	tabSaved.Text = L("tabSavedBase") .. " (" .. #data.saved .. ")"
+	tabFavs.Text = L("tabFavsBase") .. " (" .. #data.favs .. ")"
+	if #list == 0 then
+		new("TextLabel", {
+			Parent = listFrame, Size = UDim2.fromOffset(ROW_W, 100), BackgroundTransparency = 1,
+			Text = activeTab == "saved" and L("savedEmpty") or L("favsEmpty"),
+			Font = Enum.Font.GothamMedium, TextSize = 12, TextColor3 = IC.soft,
+		})
+		return
+	end
+	for i, e in ipairs(list) do Fn.buildRow(e, activeTab, i) end
+end
+
+function Fn.setTab(name)
+	activeTab = name
+	local info = TweenInfo.new(0.15)
+	tween(tabSaved, info, {
+		BackgroundTransparency = name == "saved" and 0.25 or 1,
+		TextColor3 = name == "saved" and WHITE or IC.soft,
+	})
+	tween(tabFavs, info, {
+		BackgroundTransparency = name == "favs" and 0.25 or 1,
+		TextColor3 = name == "favs" and WHITE or IC.soft,
+	})
+	tween(tabStrokes.saved, info, { Transparency = name == "saved" and 0.4 or 1 })
+	tween(tabStrokes.favs, info, { Transparency = name == "favs" and 0.4 or 1 })
+	listFrame.CanvasPosition = Vector2.new(0, 0)
+	Fn.refreshList()
+end
+
+btnSearch.btn.MouseButton1Click:Connect(function() task.spawn(Fn.search, input.Text) end)
+input.FocusLost:Connect(function(enter)
+	if enter then task.spawn(Fn.search, input.Text) end
+end)
+btnCopy.btn.MouseButton1Click:Connect(function() task.spawn(Fn.copyCurrent) end)
+btnSave.btn.MouseButton1Click:Connect(function() Fn.addTo("saved") end)
+btnFav.btn.MouseButton1Click:Connect(function() Fn.addTo("favs") end)
+btnAll.btn.MouseButton1Click:Connect(function() Fn.setAll(not All.on) end)
+btnLang.btn.MouseButton1Click:Connect(function()
+	if Fn.showPage then Fn.showPage("idiom") end
+end)
+
+btnProfile.btn.MouseButton1Click:Connect(function()
+	local id = (current and current.id) or (State.copyEntry and State.copyEntry.id)
+	if not id then
+		Fn.setStatus(L("firstSearchMsg"), T.warn)
+		return
+	end
+	local name = (current and current.name) or State.copyEntry.name
+	local IH = UI.InspectHook
+	if State.copyEntry and IH and IH.showFor then
+		Fn.setStatus(L("openingProfileMsg"), IC.soft)
+		if Fn.minimizeWindow then pcall(Fn.minimizeWindow) end
+		task.delay(0.25, function() IH.showFor(LocalPlayer.UserId, State.copyEntry) end)
+		return
+	end
+	Fn.setStatus(L("openingProfileOfMsg") .. tostring(name) .. "...", IC.soft)
+	if Fn.minimizeWindow then pcall(Fn.minimizeWindow) end
+	task.delay(0.25, function()
+		pcall(function() game:GetService("GuiService"):InspectPlayerFromUserId(id) end)
+	end)
+end)
+tabSaved.MouseButton1Click:Connect(function() Fn.setTab("saved") end)
+tabFavs.MouseButton1Click:Connect(function() Fn.setTab("favs") end)
+
+btnRestore.btn.MouseButton1Click:Connect(function()
+	if applying then return end
+	applying = true
+	Fn.setStatus(L("restoringMsg"), IC.soft)
+	task.spawn(function()
+		local ok, err = pcall(Fn.restoreAvatar)
+		if ok then
+			Fn.setStatus(L("restoredMsg"), T.green)
+			if UI.AllSync then UI.AllSync() end
+		else
+			Fn.setStatus("Error: " .. tostring(err), T.red)
+		end
+		Fn.setProgress(0)
+		applying = false
+	end)
+end)
+
+Fn.setTab("saved")
+
+UI.mountSelector = function()
+	local SelPanel = new("CanvasGroup", {
+		Parent = Window, Position = UDim2.fromOffset(10, 52), Size = UDim2.fromOffset(520, 304),
+		BackgroundTransparency = 1, BorderSizePixel = 0, GroupTransparency = 0, Visible = false,
+	})
+
+	local head = new("Frame", {
+		Parent = SelPanel, Position = UDim2.fromOffset(0, 0), Size = UDim2.fromOffset(520, 100),
+		BackgroundColor3 = IC.btnBg, BackgroundTransparency = 0.4, BorderSizePixel = 0,
+	})
+	corner(head, 6)
+	stroke(head, IC.btnLine, 1, 0.65)
+	new("TextLabel", {
+		Parent = head, Position = UDim2.fromOffset(12, 6), Size = UDim2.fromOffset(150, 24),
+		BackgroundTransparency = 1, Text = L("selTitle"), Font = Enum.Font.Garamond,
+		TextSize = 20, TextColor3 = IC.title, TextXAlignment = Enum.TextXAlignment.Left,
+	})
+	local curLbl = new("TextLabel", {
+		Parent = head, Position = UDim2.fromOffset(170, 9), Size = UDim2.fromOffset(340, 18),
+		BackgroundTransparency = 1, Text = L("selNone"), Font = Enum.Font.GothamMedium, TextSize = 11,
+		TextColor3 = IC.gold, TextXAlignment = Enum.TextXAlignment.Right, TextTruncate = Enum.TextTruncate.AtEnd,
+	})
+
+	local inBox = new("Frame", {
+		Parent = head, Position = UDim2.fromOffset(10, 34), Size = UDim2.fromOffset(260, 32),
+		BackgroundColor3 = IC.btnBg, BackgroundTransparency = 0.4, BorderSizePixel = 0,
+	})
+	corner(inBox, 4)
+	local inStroke = stroke(inBox, IC.btnLine, 1, 0.55)
+	local selInput = new("TextBox", {
+		Parent = inBox, Position = UDim2.fromOffset(10, 0), Size = UDim2.new(1, -20, 1, 0),
+		BackgroundTransparency = 1, BorderSizePixel = 0, Text = "", PlaceholderText = L("selSearchPH"),
+		PlaceholderColor3 = IC.soft, TextColor3 = IC.title, Font = Enum.Font.GothamMedium,
+		TextSize = 13, ClearTextOnFocus = false, TextXAlignment = Enum.TextXAlignment.Left,
+		ClipsDescendants = true,
+	})
+	selInput.Focused:Connect(function()
+		tween(inStroke, TweenInfo.new(0.15), { Color = IC.gold, Transparency = 0.2 })
+	end)
+	selInput.FocusLost:Connect(function()
+		tween(inStroke, TweenInfo.new(0.15), { Color = IC.btnLine, Transparency = 0.55 })
+	end)
+
+	local btnSelSearch = UI.button({
+		parent = head, text = L("searchBtn"), icon = "search", size = UDim2.fromOffset(112, 32),
+		pos = UDim2.fromOffset(278, 34), style = "main",
+	})
+	local btnSelClear = UI.button({
+		parent = head, text = L("selClearBtn"), icon = "back", size = UDim2.fromOffset(112, 32),
+		pos = UDim2.fromOffset(398, 34), style = "dark", textSize = 11,
+	})
+	local selStatus = new("TextLabel", {
+		Parent = head, Position = UDim2.fromOffset(12, 72), Size = UDim2.fromOffset(496, 20),
+		BackgroundTransparency = 1, Text = L("selStatusDefault"),
+		Font = Enum.Font.Gotham, TextSize = 11, TextColor3 = IC.soft,
+		TextXAlignment = Enum.TextXAlignment.Left, TextTruncate = Enum.TextTruncate.AtEnd,
+	})
+
+	local listBox = new("Frame", {
+		Parent = SelPanel, Position = UDim2.fromOffset(0, 108), Size = UDim2.fromOffset(520, 196),
+		BackgroundColor3 = IC.btnBg, BackgroundTransparency = 0.4, BorderSizePixel = 0,
+	})
+	corner(listBox, 6)
+	stroke(listBox, IC.btnLine, 1, 0.65)
+	new("TextLabel", {
+		Parent = listBox, Position = UDim2.fromOffset(12, 6), Size = UDim2.fromOffset(250, 24),
+		BackgroundTransparency = 1, Text = L("selListTitle"), Font = Enum.Font.Garamond,
+		TextSize = 20, TextColor3 = IC.title, TextXAlignment = Enum.TextXAlignment.Left,
+	})
+	local countLbl = new("TextLabel", {
+		Parent = listBox, Position = UDim2.fromOffset(330, 10), Size = UDim2.fromOffset(178, 18),
+		BackgroundTransparency = 1, Text = "", Font = Enum.Font.GothamMedium, TextSize = 11,
+		TextColor3 = IC.soft, TextXAlignment = Enum.TextXAlignment.Right,
+	})
+	local selList = new("ScrollingFrame", {
+		Parent = listBox, Position = UDim2.fromOffset(8, 34), Size = UDim2.fromOffset(504, 154),
+		BackgroundTransparency = 1, BorderSizePixel = 0, ScrollBarThickness = 3,
+		ScrollBarImageColor3 = IC.gold, CanvasSize = UDim2.new(), AutomaticCanvasSize = Enum.AutomaticSize.Y,
+		ScrollingDirection = Enum.ScrollingDirection.Y, ClipsDescendants = true,
+	})
+	new("UIPadding", {
+		Parent = selList, PaddingTop = UDim.new(0, 2), PaddingBottom = UDim.new(0, 2),
+		PaddingLeft = UDim.new(0, 2), PaddingRight = UDim.new(0, 6),
+	})
+	new("UIListLayout", { Parent = selList, Padding = UDim.new(0, 6), SortOrder = Enum.SortOrder.LayoutOrder })
+
+	local function say(text, color)
+		selStatus.Text = text
+		selStatus.TextColor3 = color or IC.soft
+	end
+
+	local function refreshCur()
+		if current then
+			local d = current.display or current.name
+			curLbl.Text = (d ~= current.name) and (d .. " (@" .. current.name .. ")") or current.name
+		else
+			curLbl.Text = L("selNone")
+		end
+	end
+
+	UI.onStatus = function(text, color)
+		say(text, color)
+		refreshCur()
+	end
+
+	local rows = {}
+	local ROW_W2 = 490
+	local refreshRows
+
+	local function updateRow(uid)
+		local rec = rows[uid]
+		if not rec or not rec.sub.Parent then return end
+		local a = Assign[uid]
+		if a then
+			rec.sub.Text = "Avatar: " .. (a.display or a.name) .. " (@" .. a.name .. ")"
+			rec.sub.TextColor3 = IC.goldLight
+		else
+			rec.sub.Text = "@" .. rec.plr.Name
+			rec.sub.TextColor3 = IC.soft
+		end
+	end
+
+	local function putOn(plr)
+		if not plr.Parent then return end
+		local cur = current
+		if not cur then
+			say(L("firstSearchMsg"), T.warn)
+			return
+		end
+		Assign[plr.UserId] = cur
+		updateRow(plr.UserId)
+		say(L("selLoadingFor") .. plr.DisplayName .. "...", IC.soft)
+		GH.unmount(plr)
+		GH.ensure(plr)
+		if UI.AllSync then UI.AllSync() end
+	end
+
+	local function clearOne(plr)
+		if not Assign[plr.UserId] then return end
+		Assign[plr.UserId] = nil
+		GH.ensure(plr)
+		updateRow(plr.UserId)
+		if UI.AllSync then UI.AllSync() end
+		say(plr.DisplayName .. L("selBackNormal"), IC.soft)
+	end
+
+	GH.onMounted = function(plr, entry)
+		if Assign[plr.UserId] then
+			updateRow(plr.UserId)
+			say(plr.DisplayName .. L("selNowLooksLike") .. (entry.display or entry.name) .. ".", T.green)
+		end
+	end
+
+	local function buildSelRow(plr, order)
+		local uid = plr.UserId
+		local row = new("Frame", {
+			Parent = selList, Size = UDim2.fromOffset(ROW_W2, 44), BackgroundColor3 = IC.btnBg,
+			BackgroundTransparency = 0.35, BorderSizePixel = 0, LayoutOrder = order,
+		})
+		corner(row, 4)
+		stroke(row, IC.btnLine, 1, 0.7)
+
+		local thumb = new("ImageLabel", {
+			Parent = row, Position = UDim2.fromOffset(6, 7), Size = UDim2.fromOffset(30, 30),
+			BackgroundColor3 = IC.btnBg, BorderSizePixel = 0, Image = "", ImageTransparency = 1,
+			ScaleType = Enum.ScaleType.Crop,
+		})
+		corner(thumb, 15)
+		stroke(thumb, IC.gold, 1, 0.5)
+		task.spawn(function()
+			local c = Fn.headThumb(uid)
+			if c and thumb.Parent then
+				thumb.Image = c
+				tween(thumb, TweenInfo.new(0.2, Enum.EasingStyle.Quad), { ImageTransparency = 0 })
+			end
+		end)
+
+		new("TextLabel", {
+			Parent = row, Position = UDim2.fromOffset(44, 5), Size = UDim2.fromOffset(250, 18),
+			BackgroundTransparency = 1, Text = plr.DisplayName, Font = Enum.Font.GothamBold, TextSize = 12,
+			TextColor3 = IC.title, TextXAlignment = Enum.TextXAlignment.Left, TextTruncate = Enum.TextTruncate.AtEnd,
+		})
+		local sub = new("TextLabel", {
+			Parent = row, Position = UDim2.fromOffset(44, 23), Size = UDim2.fromOffset(250, 14),
+			BackgroundTransparency = 1, Text = "", Font = Enum.Font.Gotham, TextSize = 10,
+			TextColor3 = IC.soft, TextXAlignment = Enum.TextXAlignment.Left, TextTruncate = Enum.TextTruncate.AtEnd,
+		})
+
+		local put = UI.button({
+			parent = row, text = L("selPutBtn"), size = UDim2.fromOffset(70, 30), pos = UDim2.fromOffset(374, 7),
+			style = "main", textSize = 11, radius = 4,
+		})
+		local reset = UI.button({
+			parent = row, icon = "back", iconSize = 14, size = UDim2.fromOffset(30, 30),
+			pos = UDim2.fromOffset(452, 7), style = "dark", radius = 4,
+		})
+
+		rows[uid] = { plr = plr, sub = sub }
+		updateRow(uid)
+
+		put.btn.MouseButton1Click:Connect(function() task.spawn(putOn, plr) end)
+		reset.btn.MouseButton1Click:Connect(function() clearOne(plr) end)
+	end
+
+	function refreshRows()
+		for _, c in ipairs(selList:GetChildren()) do
+			if c:IsA("Frame") or c:IsA("TextLabel") then c:Destroy() end
+		end
+		rows = {}
+		local list = {}
+		for _, p in ipairs(Players:GetPlayers()) do
+			if p ~= LocalPlayer then list[#list + 1] = p end
+		end
+		table.sort(list, function(a, b) return string.lower(a.DisplayName) < string.lower(b.DisplayName) end)
+		local n = #list
+		countLbl.Text = n .. (n == 1 and L("selPlayer") or L("selPlayers"))
+		if n == 0 then
+			new("TextLabel", {
+				Parent = selList, Size = UDim2.fromOffset(ROW_W2, 100), BackgroundTransparency = 1,
+				Text = L("selNoPlayers"), Font = Enum.Font.GothamMedium, TextSize = 12,
+				TextColor3 = IC.soft,
+			})
+			return
+		end
+		for i, p in ipairs(list) do buildSelRow(p, i) end
+	end
+
+	local function doSearch()
+		local t = selInput.Text
+		task.spawn(function()
+			local ok = Fn.search(t)
+			refreshCur()
+			if ok and current then
+				say(L("avatarReadySel") .. current.name .. L("avatarReadySel2"), T.green)
+			end
+		end)
+	end
+	btnSelSearch.btn.MouseButton1Click:Connect(doSearch)
+	selInput.FocusLost:Connect(function(enter)
+		if enter then doSearch() end
+	end)
+
+	btnSelClear.btn.MouseButton1Click:Connect(function()
+		local any = false
+		for uid in pairs(Assign) do
+			Assign[uid] = nil
+			any = true
+		end
+		GH.ensureAll()
+		if UI.AllSync then UI.AllSync() end
+		for uid in pairs(rows) do
+			updateRow(uid)
+		end
+		say(any and L("selAllNormal") or L("selNoneSet"), IC.soft)
+	end)
+
+	track(Players.PlayerAdded:Connect(function()
+		task.delay(0.3, function()
+			if SelPanel.Visible then refreshRows() end
+		end)
+	end))
+	track(Players.PlayerRemoving:Connect(function(p)
+		Assign[p.UserId] = nil
+		task.delay(0.1, function()
+			if SelPanel.Visible then refreshRows() end
+		end)
+	end))
+
+	-- INSTRUCCIONES PANEL
+	local InstrPanel = new("CanvasGroup", {
+		Parent = Window, Position = UDim2.fromOffset(10, 52), Size = UDim2.fromOffset(520, 304),
+		BackgroundTransparency = 1, BorderSizePixel = 0, GroupTransparency = 0, Visible = false,
+	})
+
+	local instrBox = new("Frame", {
+		Parent = InstrPanel, Position = UDim2.fromOffset(0, 0), Size = UDim2.fromOffset(520, 304),
+		BackgroundColor3 = IC.btnBg, BackgroundTransparency = 0.35, BorderSizePixel = 0,
+	})
+	corner(instrBox, 6)
+	stroke(instrBox, IC.btnLine, 1, 0.6)
+
+	local instrHeaderBar = new("Frame", {
+		Parent = instrBox, Size = UDim2.new(1, 0, 0, 38), BackgroundColor3 = IC.btnBgMain,
+		BackgroundTransparency = 0.3, BorderSizePixel = 0,
+	})
+	corner(instrHeaderBar, 6)
+
+	local instrIconFrame = new("Frame", {
+		Parent = instrHeaderBar, Position = UDim2.fromOffset(12, 9), Size = UDim2.fromOffset(20, 20),
+		BackgroundTransparency = 1,
+	})
+	local instrIconInner = UI.icon("info", instrIconFrame, IC.gold, 20)
+	instrIconInner.root.Position = UDim2.fromOffset(0, 0)
+
+	local instrTitleLbl = new("TextLabel", {
+		Parent = instrHeaderBar, Position = UDim2.fromOffset(40, 6), Size = UDim2.fromOffset(460, 26),
+		BackgroundTransparency = 1, Text = L("instrTitle"), Font = Enum.Font.Garamond,
+		TextSize = 22, TextColor3 = IC.title, TextXAlignment = Enum.TextXAlignment.Left,
+	})
+	grad(instrTitleLbl, IC.title, IC.titleLow, 90)
+
+	local instrDivider = new("Frame", {
+		Parent = instrBox, Position = UDim2.fromOffset(0, 38), Size = UDim2.new(1, 0, 0, 1),
+		BackgroundColor3 = IC.gold, BorderSizePixel = 0,
+	})
+	new("UIGradient", {
+		Parent = instrDivider,
+		Transparency = NumberSequence.new({
+			NumberSequenceKeypoint.new(0, 1),
+			NumberSequenceKeypoint.new(0.5, 0.3),
+			NumberSequenceKeypoint.new(1, 1),
+		}),
+	})
+
+	local instrScroll = new("ScrollingFrame", {
+		Parent = instrBox, Position = UDim2.fromOffset(0, 44), Size = UDim2.new(1, 0, 1, -44),
+		BackgroundTransparency = 1, BorderSizePixel = 0, ScrollBarThickness = 3,
+		ScrollBarImageColor3 = IC.gold, CanvasSize = UDim2.new(), AutomaticCanvasSize = Enum.AutomaticSize.Y,
+		ScrollingDirection = Enum.ScrollingDirection.Y, ClipsDescendants = true,
+	})
+	new("UIPadding", {
+		Parent = instrScroll, PaddingTop = UDim.new(0, 14), PaddingBottom = UDim.new(0, 14),
+		PaddingLeft = UDim.new(0, 18), PaddingRight = UDim.new(0, 18),
+	})
+
+	local instrText = new("TextLabel", {
+		Parent = instrScroll, Size = UDim2.new(1, 0, 0, 0), AutomaticSize = Enum.AutomaticSize.Y,
+		BackgroundTransparency = 1, Text = L("instrContent"), Font = Enum.Font.Gotham,
+		TextSize = 13, TextColor3 = IC.title, TextWrapped = true,
+		TextXAlignment = Enum.TextXAlignment.Left, TextYAlignment = Enum.TextYAlignment.Top,
+		RichText = false,
+	})
+
+	-- IDIOMA PANEL
+	local IdiomPanel = new("CanvasGroup", {
+		Parent = Window, Position = UDim2.fromOffset(10, 52), Size = UDim2.fromOffset(520, 304),
+		BackgroundTransparency = 1, BorderSizePixel = 0, GroupTransparency = 0, Visible = false,
+	})
+
+	local idiomBox = new("Frame", {
+		Parent = IdiomPanel, Position = UDim2.fromOffset(0, 0), Size = UDim2.fromOffset(520, 304),
+		BackgroundColor3 = IC.btnBg, BackgroundTransparency = 0.35, BorderSizePixel = 0,
+	})
+	corner(idiomBox, 6)
+	stroke(idiomBox, IC.btnLine, 1, 0.6)
+
+	local idiomHeaderBar = new("Frame", {
+		Parent = idiomBox, Size = UDim2.new(1, 0, 0, 38), BackgroundColor3 = IC.btnBgMain,
+		BackgroundTransparency = 0.3, BorderSizePixel = 0,
+	})
+	corner(idiomHeaderBar, 6)
+
+	local idiomIconFrame = new("Frame", {
+		Parent = idiomHeaderBar, Position = UDim2.fromOffset(12, 9), Size = UDim2.fromOffset(20, 20),
+		BackgroundTransparency = 1,
+	})
+	local idiomIconInner = UI.icon("globe", idiomIconFrame, IC.gold, 20)
+	idiomIconInner.root.Position = UDim2.fromOffset(0, 0)
+
+	local idiomTitleLbl = new("TextLabel", {
+		Parent = idiomHeaderBar, Position = UDim2.fromOffset(40, 6), Size = UDim2.fromOffset(460, 26),
+		BackgroundTransparency = 1, Text = L("idiomTitle"), Font = Enum.Font.Garamond,
+		TextSize = 22, TextColor3 = IC.title, TextXAlignment = Enum.TextXAlignment.Left,
+	})
+	grad(idiomTitleLbl, IC.title, IC.titleLow, 90)
+
+	local idiomDivider = new("Frame", {
+		Parent = idiomBox, Position = UDim2.fromOffset(0, 38), Size = UDim2.new(1, 0, 0, 1),
+		BackgroundColor3 = IC.gold, BorderSizePixel = 0,
+	})
+	new("UIGradient", {
+		Parent = idiomDivider,
+		Transparency = NumberSequence.new({
+			NumberSequenceKeypoint.new(0, 1),
+			NumberSequenceKeypoint.new(0.5, 0.3),
+			NumberSequenceKeypoint.new(1, 1),
+		}),
+	})
+
+	local idiomSubLbl = new("TextLabel", {
+		Parent = idiomBox, Position = UDim2.fromOffset(18, 50), Size = UDim2.new(1, -36, 0, 20),
+		BackgroundTransparency = 1, Text = L("idiomSub"), Font = Enum.Font.GothamMedium,
+		TextSize = 12, TextColor3 = IC.soft, TextXAlignment = Enum.TextXAlignment.Left,
+	})
+
+	local langBtnES, langBtnEN
+
+	local function updateLangButtons()
+		if langBtnES and langBtnEN then
+			langBtnES.setStyle(lang == "es" and "main" or "dark")
+			langBtnEN.setStyle(lang == "en" and "main" or "dark")
+		end
+	end
+
+	langBtnES = UI.button({
+		parent = idiomBox, text = "🇪🇸  Español", icon = "check", iconSize = 14,
+		size = UDim2.fromOffset(230, 54), pos = UDim2.fromOffset(18, 82),
+		style = lang == "es" and "main" or "dark", textSize = 14, radius = 6,
+	})
+
+	langBtnEN = UI.button({
+		parent = idiomBox, text = "🇺🇸  English", icon = "check", iconSize = 14,
+		size = UDim2.fromOffset(230, 54), pos = UDim2.fromOffset(272, 82),
+		style = lang == "en" and "main" or "dark", textSize = 14, radius = 6,
+	})
+
+	local currentLangIndicator = new("TextLabel", {
+		Parent = idiomBox, Position = UDim2.fromOffset(18, 148), Size = UDim2.new(1, -36, 0, 18),
+		BackgroundTransparency = 1, Text = "", Font = Enum.Font.GothamMedium,
+		TextSize = 11, TextColor3 = T.green, TextXAlignment = Enum.TextXAlignment.Center,
+	})
+
+	local function applyLang(newLang)
+		lang = newLang
+		updateLangButtons()
+		currentLangIndicator.Text = newLang == "es" and "✓ Español activado" or "✓ English activated"
+		task.delay(2, function()
+			if currentLangIndicator.Parent then currentLangIndicator.Text = "" end
+		end)
+		if LangSync then LangSync() end
+	end
+
+	langBtnES.btn.MouseButton1Click:Connect(function() applyLang("es") end)
+	langBtnEN.btn.MouseButton1Click:Connect(function() applyLang("en") end)
+
+	local page = "avatar"
+	local navTabs = {}
+
+	-- Barra de pestañas: 3 pestañas con aire, termina antes del botón de minimizar (x=468)
+	local navFrame = new("Frame", {
+		Parent = TopBar, Position = UDim2.fromOffset(244, 8), Size = UDim2.fromOffset(214, 26),
+		BackgroundColor3 = IC.btnBg, BackgroundTransparency = 0.4, BorderSizePixel = 0,
+	})
+	corner(navFrame, 4)
+	stroke(navFrame, IC.btnLine, 1, 0.65)
+
+	local function paintNav()
+		local info = TweenInfo.new(0.15)
+		for key, t in pairs(navTabs) do
+			local on = key == page
+			tween(t.btn, info, {
+				BackgroundTransparency = on and 0.25 or 1,
+				TextColor3 = on and WHITE or IC.soft,
+			})
+			tween(t.st, info, { Transparency = on and 0.4 or 1 })
+		end
+	end
+
+	local function showPage(name)
+		if page == name then return end
+		page = name
+		local isAvatar = name == "avatar"
+		local isSel = name == "select"
+		local isInstruc = name == "instruc"
+		local isIdiom = name == "idiom"
+		Left.Visible = isAvatar
+		Right.Visible = isAvatar
+		SelPanel.Visible = isSel
+		InstrPanel.Visible = isInstruc
+		IdiomPanel.Visible = isIdiom
+
+		local showPanel = isSel and SelPanel or isInstruc and InstrPanel or isIdiom and IdiomPanel or nil
+		if showPanel then
+			showPanel.GroupTransparency = 1
+			showPanel.Position = UDim2.fromOffset(10, 62)
+			tween(showPanel, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { GroupTransparency = 0 })
+			tween(showPanel, TweenInfo.new(0.4, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+				Position = UDim2.fromOffset(10, 52),
+			})
+			if isSel then
+				refreshRows()
+				refreshCur()
+			end
+		end
+		paintNav()
+	end
+	Fn.showPage = showPage
+
+	local function makeNav(text, x, w, key)
+		local b = new("TextButton", {
+			Parent = navFrame, Position = UDim2.fromOffset(x, 2), Size = UDim2.fromOffset(w, 22),
+			BackgroundColor3 = IC.btnBgMain, BackgroundTransparency = 1, AutoButtonColor = false,
+			Text = text, Font = Enum.Font.GothamMedium, TextSize = 10, TextColor3 = IC.soft, BorderSizePixel = 0,
+		})
+		corner(b, 3)
+		local st = stroke(b, IC.gold, 1, 1)
+		navTabs[key] = { btn = b, st = st }
+		b.MouseButton1Click:Connect(function() showPage(key) end)
+		return b
+	end
+
+	local navAvatar = makeNav(L("navAvatar"), 4, 52, "avatar")
+	local navSelect = makeNav(L("navSelect"), 59, 70, "select")
+	local navInstruc = makeNav(L("navInstruc"), 132, 78, "instruc")
+	paintNav()
+
+	LangSync = function()
+		if navAvatar and navAvatar.Parent then navAvatar.Text = L("navAvatar") end
+		if navSelect and navSelect.Parent then navSelect.Text = L("navSelect") end
+		if navInstruc and navInstruc.Parent then navInstruc.Text = L("navInstruc") end
+		if instrTitleLbl and instrTitleLbl.Parent then instrTitleLbl.Text = L("instrTitle") end
+		if instrText and instrText.Parent then instrText.Text = L("instrContent") end
+		if idiomTitleLbl and idiomTitleLbl.Parent then idiomTitleLbl.Text = L("idiomTitle") end
+		if idiomSubLbl and idiomSubLbl.Parent then idiomSubLbl.Text = L("idiomSub") end
+		if btnSearch.label and btnSearch.label.Parent then btnSearch.label.Text = L("searchBtn") end
+		if btnCopy.label and btnCopy.label.Parent then btnCopy.label.Text = L("copyBtn") end
+		if btnSave.label and btnSave.label.Parent then btnSave.label.Text = L("saveBtn") end
+		if btnFav.label and btnFav.label.Parent then btnFav.label.Text = L("favBtn") end
+		if btnRestore.label and btnRestore.label.Parent then btnRestore.label.Text = L("restoreBtn") end
+		if btnProfile.label and btnProfile.label.Parent then btnProfile.label.Text = L("profileBtn") end
+		if btnLang.label and btnLang.label.Parent then btnLang.label.Text = L("navIdioma") end
+		if All.on then
+			if btnAll.label and btnAll.label.Parent then btnAll.label.Text = L("allOn") end
+		else
+			if btnAll.label and btnAll.label.Parent then btnAll.label.Text = L("allOff") end
+		end
+		if input and input.Parent then input.PlaceholderText = L("searchPlaceholder") end
+		if previewHint and previewHint.Parent and previewHint.Text ~= "" then
+			if previewHint.Text == Langs["es"]["noProfile"] or previewHint.Text == Langs["en"]["noProfile"] then
+				previewHint.Text = L("noProfile")
+			end
+		end
+		Fn.refreshList()
+		updateLangButtons()
+	end
+end
+UI.mountSelector()
+
+-- Asa para cambiar el tamaño de la UI (3 rayas a 45° abajo a la derecha)
+do
+	local MIN_SCALE = 0.55
+	local grip = new("TextButton", {
+		Parent = Window, Position = UDim2.fromOffset(W - 26, H - 26), Size = UDim2.fromOffset(26, 26),
+		BackgroundTransparency = 1, AutoButtonColor = false, Text = "", BorderSizePixel = 0, ZIndex = 20,
+	})
+	local gripBars = {}
+	for _, d in ipairs({ { 19, 6 }, { 14, 13 }, { 9, 20 } }) do
+		gripBars[#gripBars + 1] = new("Frame", {
+			Parent = grip, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromOffset(d[1], d[1]),
+			Size = UDim2.fromOffset(d[2], 2), Rotation = -45, BackgroundColor3 = IC.soft,
+			BackgroundTransparency = 0.15, BorderSizePixel = 0, ZIndex = 21,
+		})
+		corner(gripBars[#gripBars], 1)
+	end
+
+	local function paintGrip(color)
+		for _, bar in ipairs(gripBars) do
+			tween(bar, TweenInfo.new(0.12), { BackgroundColor3 = color })
+		end
+	end
+
+	function Fn.setScale(b)
+		local vp = UI.viewport()
+		local maxB = math.min(2, (vp.X - Root.Position.X.Offset) / W, (vp.Y - Root.Position.Y.Offset) / H)
+		b = math.clamp(b, MIN_SCALE, math.max(MIN_SCALE, maxB))
+		BASE = b
+		Root.Size = UDim2.fromOffset(W * BASE, H * BASE)
+		winScale.Scale = BASE
+	end
+
+	local resizing, active, startPos, startBase = false, nil, nil, 1
+	track(grip.InputBegan:Connect(function(inp)
+		if inp.UserInputType == Enum.UserInputType.MouseButton1
+			or inp.UserInputType == Enum.UserInputType.Touch then
+			resizing, active, startPos, startBase = true, inp, inp.Position, BASE
+			paintGrip(IC.gold)
+			local c
+			c = inp.Changed:Connect(function()
+				if inp.UserInputState == Enum.UserInputState.End then
+					c:Disconnect()
+					resizing = false
+					paintGrip(IC.soft)
+				end
+			end)
+		end
+	end))
+	track(UIS.InputChanged:Connect(function(inp)
+		if not resizing then return end
+		if inp.UserInputType == Enum.UserInputType.MouseMovement or inp == active then
+			local d = inp.Position - startPos
+			Fn.setScale(startBase + (d.X / W + d.Y / H) / 2)
+		end
+	end))
+end
+
+do
+	local Thumbs = {
+		rec = {},
+		hooked = {},
+		watching = false,
+		active = false,
+		run = true,
+	}
+	UI.Thumbs = Thumbs
+
+	local function swapped(img)
+		if type(img) ~= "string" or img == "" then return nil end
+		local uid, kind
+		if img:find("rbxthumb://", 1, true) then
+			if not img:find("type=Avatar", 1, true) then return nil end
+			uid = tonumber(img:match("[&?]id=(%d+)"))
+			kind = 1
+		elseif img:find("thumbnail", 1, true) then
+			uid = tonumber(img:match("[Uu]ser[Ii]d=(%d+)"))
+			kind = 2
+			if not uid then
+				uid = tonumber(img:match("/users/(%d+)/"))
+				kind = 3
+			end
+		end
+		if not uid then return nil end
+		local e = UI.entryFor(uid)
+		if not e or e.id == uid then return nil end
+		local cid = e.id
+		if kind == 1 then
+			return (img:gsub("([&?]id=)%d+", function(p) return p .. cid end, 1))
+		elseif kind == 2 then
+			return (img:gsub("([Uu]ser[Ii]d=)%d+", function(p) return p .. cid end, 1))
+		end
+		return (img:gsub("(/users/)%d+", function(p) return p .. cid end, 1))
+	end
+
+	local function process(obj)
+		local img = obj.Image
+		if type(img) ~= "string" then return end
+		local rec = Thumbs.rec[obj]
+		if rec and rec.last == img then
+			local new2 = swapped(rec.orig)
+			if new2 then
+				if new2 ~= img then
+					rec.last = new2
+					pcall(function() obj.Image = new2 end)
+				end
+			else
+				Thumbs.rec[obj] = nil
+				pcall(function() obj.Image = rec.orig end)
+			end
+			return
+		end
+		if rec then Thumbs.rec[obj] = nil end
+		local new2 = swapped(img)
+		if new2 and new2 ~= img then
+			Thumbs.rec[obj] = { orig = img, last = new2 }
+			pcall(function() obj.Image = new2 end)
+		end
+	end
+
+	local function hook(obj)
+		if Thumbs.hooked[obj] or obj:IsDescendantOf(gui) then return end
+		Thumbs.hooked[obj] = obj:GetPropertyChangedSignal("Image"):Connect(function()
+			if Thumbs.active or Thumbs.rec[obj] then pcall(process, obj) end
+		end)
+		if Thumbs.active then pcall(process, obj) end
+	end
+
+	local function sweep()
+		local snap = {}
+		for obj in pairs(Thumbs.hooked) do snap[#snap + 1] = obj end
+		for i, obj in ipairs(snap) do
+			if not Thumbs.run then return end
+			local c = Thumbs.hooked[obj]
+			if c then
+				if obj:IsDescendantOf(game) then
+					pcall(process, obj)
+				else
+					pcall(function() c:Disconnect() end)
+					Thumbs.hooked[obj] = nil
+					Thumbs.rec[obj] = nil
+				end
+			end
+			if i % 300 == 0 then task.wait() end
+		end
+	end
+
+	local function ensureWatch()
+		if Thumbs.watching then return end
+		Thumbs.watching = true
+		local roots = {}
+		local okC, cg = pcall(function() return game:GetService("CoreGui") end)
+		if okC and cg then roots[#roots + 1] = cg end
+		local pg = LocalPlayer:FindFirstChildOfClass("PlayerGui")
+		if pg then roots[#roots + 1] = pg end
+		for _, root in ipairs(roots) do
+			pcall(function()
+				track(root.DescendantAdded:Connect(function(d)
+					if d:IsA("ImageLabel") or d:IsA("ImageButton") then pcall(hook, d) end
+				end))
+			end)
+			task.spawn(function()
+				local okD, list = pcall(function() return root:GetDescendants() end)
+				if not okD then return end
+				for i, d in ipairs(list) do
+					if not Thumbs.run then return end
+					if d:IsA("ImageLabel") or d:IsA("ImageButton") then pcall(hook, d) end
+					if i % 400 == 0 then task.wait() end
+				end
+			end)
+		end
+	end
+
+	function Thumbs.shutdown()
+		Thumbs.active = false
+		Thumbs.run = false
+		for obj, rec in pairs(Thumbs.rec) do
+			pcall(function()
+				if obj.Image == rec.last then obj.Image = rec.orig end
+			end)
+		end
+		Thumbs.rec = {}
+		for _, c in pairs(Thumbs.hooked) do pcall(function() c:Disconnect() end) end
+		Thumbs.hooked = {}
+	end
+
+	task.spawn(function()
+		while Thumbs.run do
+			task.wait(3)
+			if Thumbs.run and Thumbs.watching then pcall(sweep) end
+		end
+	end)
+
+	function UI.AllSync()
+		if not Thumbs.run then return end
+		Thumbs.active = State.copyEntry ~= nil or next(Assign) ~= nil or (All.on and current ~= nil)
+		if Thumbs.active then ensureWatch() end
+		task.spawn(sweep)
+	end
+end
+
+do
+	local Names = { rec = {}, hooked = {}, watching = false, active = false, run = true }
+	UI.Names = Names
+	local hdn = {}
+	local map, mapT = {}, 0
+
+	local function computeActive()
+		return State.copyEntry ~= nil or next(Assign) ~= nil or (All.on and current ~= nil)
+	end
+
+	local function getMap(force)
+		local now = os.clock()
+		if not force and now - mapT < 0.4 then return map end
+		mapT = now
+		local m = {}
+		if Names.active then
+			for _, p in ipairs(Players:GetPlayers()) do
+				local e = UI.entryFor(p.UserId)
+				if e and e.id ~= p.UserId then
+					m[p.Name] = e.name
+					m["@" .. p.Name] = "@" .. e.name
+					m[p.DisplayName] = e.display or e.name
+				end
+			end
+		end
+		map = m
+		return m
+	end
+
+	local function transform(txt, m)
+		local keys = {}
+		for k in pairs(m) do
+			if #k >= 3 then keys[#keys + 1] = k end
+		end
+		if #keys == 0 then return nil end
+		table.sort(keys, function(a, b) return #a > #b end)
+		local out, slots = txt, {}
+		for _, k in ipairs(keys) do
+			if out:find(k, 1, true) then
+				slots[#slots + 1] = m[k]
+				local tag = "\1" .. #slots .. "\2"
+				out = (out:gsub((k:gsub("%p", "%%%0")), tag))
+			end
+		end
+		if #slots == 0 then return nil end
+		out = (out:gsub("\1(%d+)\2", function(i) return slots[tonumber(i)] end))
+		return out
+	end
+
+	local function process(obj)
+		local txt = obj.Text
+		if type(txt) ~= "string" or txt == "" then return end
+		local m = getMap()
+		local rec = Names.rec[obj]
+		if rec and rec.last == txt then
+			local want = transform(rec.orig, m)
+			if want then
+				if want ~= txt then
+					rec.last = want
+					pcall(function() obj.Text = want end)
+				end
+			else
+				Names.rec[obj] = nil
+				pcall(function() obj.Text = rec.orig end)
+			end
+			return
+		end
+		if rec then Names.rec[obj] = nil end
+		local want = transform(txt, m)
+		if want and want ~= txt then
+			Names.rec[obj] = { orig = txt, last = want }
+			pcall(function() obj.Text = want end)
+		end
+	end
+
+	local function hook(obj)
+		if Names.hooked[obj] or obj:IsDescendantOf(gui) then return end
+		Names.hooked[obj] = obj:GetPropertyChangedSignal("Text"):Connect(function()
+			if Names.active or Names.rec[obj] then pcall(process, obj) end
+		end)
+		if Names.active then pcall(process, obj) end
+	end
+
+	local function sweep()
+		local snap = {}
+		for obj in pairs(Names.hooked) do snap[#snap + 1] = obj end
+		for i, obj in ipairs(snap) do
+			if not Names.run then return end
+			local c = Names.hooked[obj]
+			if c then
+				if obj:IsDescendantOf(game) then
+					pcall(process, obj)
+				else
+					pcall(function() c:Disconnect() end)
+					Names.hooked[obj] = nil
+					Names.rec[obj] = nil
+				end
+			end
+			if i % 300 == 0 then task.wait() end
+		end
+	end
+
+	local function ensureWatch()
+		if Names.watching then return end
+		Names.watching = true
+		local roots = {}
+		local okC, cg = pcall(function() return game:GetService("CoreGui") end)
+		if okC and cg then roots[#roots + 1] = cg end
+		local pg = LocalPlayer:FindFirstChildOfClass("PlayerGui")
+		if pg then roots[#roots + 1] = pg end
+		for _, root in ipairs(roots) do
+			pcall(function()
+				track(root.DescendantAdded:Connect(function(d)
+					if d:IsA("TextLabel") or d:IsA("TextButton") then pcall(hook, d) end
+				end))
+			end)
+			task.spawn(function()
+				local okD, list = pcall(function() return root:GetDescendants() end)
+				if not okD then return end
+				for i, d in ipairs(list) do
+					if not Names.run then return end
+					if d:IsA("TextLabel") or d:IsA("TextButton") then pcall(hook, d) end
+					if i % 400 == 0 then task.wait() end
+				end
+			end)
+		end
+	end
+
+	local function applyHum()
+		for _, p in ipairs(Players:GetPlayers()) do
+			local ch = p.Character
+			local hum = ch and ch:FindFirstChildOfClass("Humanoid")
+			if hum then
+				local e = Names.active and UI.entryFor(p.UserId)
+				if e and e.id ~= p.UserId then
+					local dn = e.display or e.name
+					if hdn[hum] == nil then hdn[hum] = hum.DisplayName end
+					if hum.DisplayName ~= dn then
+						pcall(function() hum.DisplayName = dn end)
+					end
+				elseif hdn[hum] ~= nil then
+					local orig = hdn[hum]
+					hdn[hum] = nil
+					pcall(function() hum.DisplayName = orig end)
+				end
+			end
+		end
+		for hum in pairs(hdn) do
+			if not hum.Parent then hdn[hum] = nil end
+		end
+	end
+
+	function Names.sync()
+		if not Names.run then return end
+		Names.active = computeActive()
+		getMap(true)
+		if Names.active then ensureWatch() end
+		pcall(applyHum)
+		task.spawn(sweep)
+	end
+
+	function Names.shutdown()
+		Names.active = false
+		Names.run = false
+		for obj, rec in pairs(Names.rec) do
+			pcall(function()
+				if obj.Text == rec.last then obj.Text = rec.orig end
+			end)
+		end
+		Names.rec = {}
+		for _, c in pairs(Names.hooked) do pcall(function() c:Disconnect() end) end
+		Names.hooked = {}
+		for hum, orig in pairs(hdn) do
+			pcall(function() hum.DisplayName = orig end)
+		end
+		hdn = {}
+	end
+
+	local prevSync = UI.AllSync
+	function UI.AllSync()
+		if prevSync then prevSync() end
+		Names.sync()
+	end
+
+	task.spawn(function()
+		local tick = 0
+		while Names.run do
+			task.wait(0.5)
+			if not Names.run then break end
+			tick = tick + 1
+			if computeActive() ~= Names.active then
+				Names.sync()
+			else
+				pcall(applyHum)
+				if Names.watching and tick % 4 == 0 then pcall(sweep) end
+			end
+		end
+	end)
+end
+
+do
+	local GuiService = game:GetService("GuiService")
+	local okC, cg = pcall(function() return game:GetService("CoreGui") end)
+	local handled = false
+	local lastT = 0
+	task.spawn(function()
+		while UI.InspectHook and UI.InspectHook.run do
+			task.wait(0.4)
+			local ce = State.copyEntry
+			local open = false
+			if okC and cg then
+				for _, g in ipairs(cg:GetChildren()) do
+					if g:IsA("ScreenGui") and g.Enabled and g.Name:lower():find("inspect") then
+						open = true
+						if os.clock() - ((UI.InspectHook and UI.InspectHook.lastShow) or 0) < 2 then
+							handled = true
+						end
+						if ce and not handled and os.clock() - lastT > 3 then
+							local mine = false
+							for _, d in ipairs(g:GetDescendants()) do
+								if d:IsA("TextLabel") or d:IsA("TextButton") then
+									local rec = UI.Names and UI.Names.rec[d]
+									local t = rec and rec.orig or d.Text
+									if type(t) == "string" and (t:find(LocalPlayer.Name, 1, true)
+										or t:find(LocalPlayer.DisplayName, 1, true)) then
+										mine = true
+										break
+									end
+								end
+							end
+							if mine then
+								handled, lastT = true, os.clock()
+								pcall(function() GuiService:CloseInspectMenu() end)
+								task.wait(0.15)
+								pcall(UI.InspectHook.showFor, LocalPlayer.UserId, ce)
+							end
+						end
+					end
+				end
+			end
+			if not open then handled = false end
+		end
+	end)
+end
+
+local FS = 34
+local floatRoot = new("Frame", {
+	Parent = gui, Size = UDim2.fromOffset(FS, FS), Position = UDim2.fromOffset(20, 100),
+	BackgroundTransparency = 1, Visible = false, Active = true,
+})
+local floatBtn = new("TextButton", {
+	Parent = floatRoot, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5),
+	Size = UDim2.fromScale(1, 1), BackgroundTransparency = 1, AutoButtonColor = false,
+	Text = "", BorderSizePixel = 0, ClipsDescendants = true,
+})
+corner(floatBtn, 9)
+do
+local floatStroke = stroke(floatBtn, WHITE, 2, 0.2)
+local floatGrad = grad(floatStroke, IC.gold, IC.btnLine, 45)
+tween(floatGrad, TweenInfo.new(6, Enum.EasingStyle.Linear, Enum.EasingDirection.In, -1), { Rotation = 405 })
+local floatImg = new("ImageLabel", {
+	Parent = floatBtn, Size = UDim2.fromScale(1, 1), BackgroundTransparency = 1,
+	ScaleType = Enum.ScaleType.Crop, Image = "", BorderSizePixel = 0, Active = false,
+	ImageTransparency = 1,
+})
+corner(floatImg, 9)
+UI.logo(floatImg)
+end
+local floatScale = new("UIScale", { Parent = floatBtn, Scale = 0 })
+
+local token = 0
+local floatPlaced = false
+local TI_CLOSE = TweenInfo.new(0.24, Enum.EasingStyle.Quint, Enum.EasingDirection.In)
+local TI_FLOAT_OUT = TweenInfo.new(0.18, Enum.EasingStyle.Quint, Enum.EasingDirection.In)
+
+UI.mountFloatHide = function()
+	local FH = { hidden = false }
+	UI.FloatHide = FH
+
+	local hideBtn = new("TextButton", {
+		Parent = floatRoot, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromOffset(FS - 6, 6),
+		Size = UDim2.fromOffset(15, 15), BackgroundColor3 = IC.btnBg, BackgroundTransparency = 0.15,
+		AutoButtonColor = false, Text = "", BorderSizePixel = 0, ZIndex = 3,
+	})
+	corner(hideBtn, 8)
+	stroke(hideBtn, IC.gold, 1, 0.3)
+	local hideIcon = UI.icon("min", hideBtn, IC.goldLight, 9)
+	hideIcon.root.AnchorPoint = Vector2.new(0.5, 0.5)
+	hideIcon.root.Position = UDim2.fromScale(0.5, 0.5)
+	hideIcon.root.ZIndex = 4
+	for _, d in ipairs(hideIcon.root:GetDescendants()) do
+		if d:IsA("GuiObject") then d.ZIndex = 4 end
+	end
+	FH.scale = new("UIScale", { Parent = hideBtn, Scale = 0 })
+
+	local dock = new("TextButton", {
+		Parent = gui, AnchorPoint = Vector2.new(0, 0.5), Position = UDim2.fromOffset(0, 120),
+		Size = UDim2.fromOffset(12, 30), BackgroundColor3 = IC.btnBg, BackgroundTransparency = 0.35,
+		AutoButtonColor = false, Text = "", BorderSizePixel = 0, Visible = false,
+	})
+	corner(dock, 6)
+	stroke(dock, IC.gold, 1, 0.45)
+	local dockIcon = UI.icon("plus", dock, IC.goldLight, 8)
+	dockIcon.root.AnchorPoint = Vector2.new(0.5, 0.5)
+	dockIcon.root.Position = UDim2.fromScale(0.5, 0.5)
+	local dockScale = new("UIScale", { Parent = dock, Scale = 0 })
+	local dockToken = 0
+
+	function FH.tweenBtn(info, value)
+		tween(FH.scale, info, { Scale = value })
+	end
+
+	function FH.showTab()
+		dockToken = dockToken + 1
+		local vp = UI.viewport()
+		local cx = floatRoot.Position.X.Offset + FS / 2
+		local cy = floatRoot.Position.Y.Offset + FS / 2
+		local left = cx < vp.X / 2
+		cy = math.clamp(cy, 30, math.max(30, vp.Y - 30))
+		dock.AnchorPoint = Vector2.new(left and 0 or 1, 0.5)
+		dock.Position = UDim2.fromOffset(left and 0 or vp.X, cy)
+		dockScale.Scale = 0
+		dock.Visible = true
+		tween(dockScale, TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.Out), { Scale = 1 })
+	end
+
+	function FH.hideTab()
+		dockToken = dockToken + 1
+		local my = dockToken
+		if not dock.Visible then return end
+		tween(dockScale, TweenInfo.new(0.16, Enum.EasingStyle.Quint, Enum.EasingDirection.In), { Scale = 0 }).Completed:Connect(function()
+			if dockToken == my then dock.Visible = false end
+		end)
+	end
+
+	function FH.onOpen()
+		FH.tweenBtn(TI_FLOAT_OUT, 0)
+		FH.hideTab()
+	end
+
+	function FH.hide()
+		FH.hidden = true
+		tween(floatScale, TI_FLOAT_OUT, { Scale = 0 })
+		tween(FH.scale, TI_FLOAT_OUT, { Scale = 0 }).Completed:Connect(function()
+			if FH.hidden then floatRoot.Visible = false end
+		end)
+		FH.showTab()
+	end
+
+	hideBtn.MouseButton1Click:Connect(FH.hide)
+	dock.MouseButton1Click:Connect(function()
+		FH.hidden = false
+		UI.openWindow()
+	end)
+end
+UI.mountFloatHide()
+
+function Fn.floatDelta()
+	local fx = floatRoot.Position.X.Offset + FS / 2
+	local fy = floatRoot.Position.Y.Offset + FS / 2
+	local rx = Root.Position.X.Offset + (W * BASE) / 2
+	local ry = Root.Position.Y.Offset + (H * BASE) / 2
+	return fx - rx, fy - ry
+end
+
+function Fn.openWindow()
+	token = token + 1
+	local my = token
+	local fromFloat = floatPlaced and floatRoot.Visible
+
+	Root.Visible = true
+	Window.GroupTransparency = 1
+	if fromFloat then
+		local dx, dy = Fn.floatDelta()
+		Window.Position = UDim2.new(0.5, dx, 0.5, dy)
+		winScale.Scale = BASE * 0.2
+	else
+		Window.Position = UDim2.new(0.5, 0, 0.5, 26)
+		winScale.Scale = BASE * 0.8
+	end
+	bgScale.Scale = 1.14
+	Left.Position = UDim2.fromOffset(-30, 52)
+	Right.Position = UDim2.fromOffset(260, 52)
+	headLine.Size = UDim2.new(0, 0, 0, 1)
+
+	tween(Window, TweenInfo.new(0.4, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { GroupTransparency = 0 })
+	tween(winScale, TweenInfo.new(0.55, Enum.EasingStyle.Back, Enum.EasingDirection.Out), { Scale = BASE })
+	tween(Window, TweenInfo.new(0.55, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+		Position = UDim2.fromScale(0.5, 0.5),
+	})
+	tween(headLine, TweenInfo.new(0.7, Enum.EasingStyle.Quint, Enum.EasingDirection.Out, 0, false, 0.1), {
+		Size = UDim2.new(1, 0, 0, 1),
+	})
+	tween(Left, TweenInfo.new(0.6, Enum.EasingStyle.Quint, Enum.EasingDirection.Out, 0, false, 0.08), {
+		Position = UDim2.fromOffset(10, 52),
+	})
+	tween(Right, TweenInfo.new(0.6, Enum.EasingStyle.Quint, Enum.EasingDirection.Out, 0, false, 0.16), {
+		Position = UDim2.fromOffset(210, 52),
+	})
+	tween(bgScale, TweenInfo.new(7, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Scale = 1 })
+
+	tween(floatScale, TI_FLOAT_OUT, { Scale = 0 }).Completed:Connect(function()
+		if token == my then floatRoot.Visible = false end
+	end)
+	if UI.FloatHide then UI.FloatHide.onOpen() end
+end
+UI.openWindow = Fn.openWindow
+
+function Fn.minimizeWindow()
+	token = token + 1
+	local my = token
+	if not floatPlaced then
+		local vp = UI.viewport()
+		local cx = Root.Position.X.Offset + (W * BASE) / 2 - FS / 2
+		local cy = Root.Position.Y.Offset + (H * BASE) / 2 - FS / 2
+		floatRoot.Position = UDim2.fromOffset(
+			math.clamp(cx, 0, math.max(0, vp.X - FS)),
+			math.clamp(cy, 0, math.max(0, vp.Y - FS))
+		)
+		floatPlaced = true
+	end
+	local fh = UI.FloatHide
+	local showFloat = not (fh and fh.hidden)
+	if showFloat then
+		floatRoot.Visible = true
+		floatScale.Scale = 0
+		if fh then fh.scale.Scale = 0 end
+	end
+	local dx, dy = Fn.floatDelta()
+
+	tween(Window, TI_CLOSE, { GroupTransparency = 1, Position = UDim2.new(0.5, dx, 0.5, dy) })
+	tween(winScale, TI_CLOSE, { Scale = BASE * 0.2 }).Completed:Connect(function()
+		if token == my then
+			Root.Visible = false
+			Window.Position = UDim2.fromScale(0.5, 0.5)
+		end
+	end)
+	if showFloat then
+		local info = TweenInfo.new(0.34, Enum.EasingStyle.Back, Enum.EasingDirection.Out, 0, false, 0.12)
+		tween(floatScale, info, { Scale = 1 })
+		if fh then fh.tweenBtn(info, 1) end
+	elseif fh then
+		fh.showTab()
+	end
+end
+
+UI.draggable(floatBtn, floatRoot, Fn.openWindow,
+	function()
+		tween(floatScale, TweenInfo.new(0.1), { Scale = 0.92 })
+	end,
+	function()
+		tween(floatScale, TweenInfo.new(0.18, Enum.EasingStyle.Back, Enum.EasingDirection.Out), { Scale = 1 })
+	end)
+
+btnMin.MouseButton1Click:Connect(Fn.minimizeWindow)
+
+function Fn.destroyAll()
+	if UI.InspectHook then UI.InspectHook.run = false end
+	UI.onStatus = nil
+	pcall(GH.shutdown)
+	if UI.Thumbs then pcall(UI.Thumbs.shutdown) end
+	if UI.Names then pcall(UI.Names.shutdown) end
+	pcall(Fn.restoreAvatar)
+	for _, b in pairs(Build) do
+		if b.template then pcall(function() b.template:Destroy() end) end
+	end
+	Build, BuildOrder = {}, {}
+	for k in pairs(Assign) do Assign[k] = nil end
+	for _, c in ipairs(conns) do pcall(function() c:Disconnect() end) end
+	conns = {}
+	if gui then gui:Destroy() end
+	env.NexvyrAvatarCleanup = nil
+end
+env.NexvyrAvatarCleanup = Fn.destroyAll
+
+btnClose.MouseButton1Click:Connect(function()
+	Modal.show({
+		title = L("closeTitle"),
+		text = L("closeText"),
+		leftText = L("closeLeft"), leftStyle = "main",
+		rightText = L("closeRight"), rightStyle = "danger",
+		onRight = function()
+			tween(winScale, TI_CLOSE, { Scale = BASE * 0.85 })
+			tween(Window, TI_CLOSE, { GroupTransparency = 1 }).Completed:Connect(Fn.destroyAll)
+		end,
+	})
+end)
+
+Root.Visible = false
+
+local introGui = new("ScreenGui", {
+	Name = "NexvyrIntro", ResetOnSpawn = false, IgnoreGuiInset = true,
+	DisplayOrder = 1000, ZIndexBehavior = Enum.ZIndexBehavior.Sibling, Parent = parent,
+})
+
+local intro = new("CanvasGroup", {
+	Parent = introGui, Size = UDim2.fromScale(1, 1), BackgroundColor3 = BLACK,
+	BackgroundTransparency = 0, BorderSizePixel = 0, GroupTransparency = 1, Active = true,
+})
+
+local introBgScale = UI.background(intro, 0.55)
+
+local CW, CH = 735, 340
+local content = new("Frame", {
+	Parent = intro, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.46),
+	Size = UDim2.fromOffset(CW, CH), BackgroundTransparency = 1, BorderSizePixel = 0,
+})
+local contentScale = new("UIScale", { Parent = content, Scale = 1 })
+
+function Fn.introVP()
+	local s = introGui.AbsoluteSize
+	if s.X < 10 or s.Y < 10 then s = workspace.CurrentCamera.ViewportSize end
+	return s
+end
+function Fn.fitIntro()
+	local v = Fn.introVP()
+	contentScale.Scale = math.clamp(math.min(v.X / CW, v.Y / 380), 0.3, 1.3)
+end
+Fn.fitIntro()
+track(introGui:GetPropertyChangedSignal("AbsoluteSize"):Connect(Fn.fitIntro))
+
+do
+local titleLbl = new("TextLabel", {
+	Parent = content, Position = UDim2.fromOffset(0, 0), Size = UDim2.fromOffset(CW, 60),
+	BackgroundTransparency = 1, Text = "NEXVYRHUB | COPY AVATAR", Font = Enum.Font.Garamond,
+	TextSize = 50, TextColor3 = WHITE, TextStrokeTransparency = 0.88, TextStrokeColor3 = BLACK,
+})
+grad(titleLbl, IC.title, IC.titleLow, 90)
+end
+
+new("TextLabel", {
+	Parent = content, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.new(0.5, 0, 0, 82),
+	Size = UDim2.fromOffset(50, 24), BackgroundTransparency = 1, Text = "By", Font = Enum.Font.Garamond,
+	TextSize = 22, TextColor3 = IC.soft,
+})
+
+new("TextLabel", {
+	Parent = content, Position = UDim2.fromOffset(0, 100), Size = UDim2.fromOffset(CW, 34),
+	BackgroundTransparency = 1, Text = L("introSub"), Font = Enum.Font.Garamond,
+	TextSize = 26, TextColor3 = IC.soft, TextStrokeTransparency = 0.9, TextStrokeColor3 = BLACK,
+})
+
+local introBusy = false
+
+function Fn.introButton(text, y, style, onClick)
+	local h = UI.button({
+		parent = content, text = text, size = UDim2.fromOffset(270, 42),
+		pos = UDim2.fromOffset(CW / 2, y + 21), anchor = Vector2.new(0.5, 0.5),
+		style = style, textSize = 14, radius = 3, diamonds = style == "main",
+	})
+	h.btn.MouseButton1Click:Connect(function()
+		if introBusy then return end
+		onClick(h.label)
+	end)
+	return h
+end
+
+function Fn.closeIntro(after)
+	if introBusy then return end
+	introBusy = true
+	tween(intro, TweenInfo.new(0.55, Enum.EasingStyle.Quad, Enum.EasingDirection.In), { GroupTransparency = 1 })
+	task.delay(0.6, function()
+		pcall(function() introGui:Destroy() end)
+		introGui = nil
+		if after then after() end
+	end)
+end
+
+function Fn.copyText(s)
+	local fn = setclipboard or toclipboard or set_clipboard or (Clipboard and Clipboard.set)
+	if not fn then return false end
+	return (pcall(fn, s))
+end
+
+Fn.introButton(L("openLib"), 160, "main", function()
+	Fn.closeIntro(Fn.openWindow)
+end)
+
+Fn.introButton(L("discordBtn"), 208, "dark", function(lbl)
+	local ok = Fn.copyText(DISCORD_LINK)
+	lbl.Text = ok and L("linkCopied") or "discord.gg/rE28J6fp4"
+	lbl.TextColor3 = T.green
+	task.delay(1.8, function()
+		if lbl.Parent then
+			lbl.Text = L("discordBtn")
+			lbl.TextColor3 = STYLES.dark.text
+		end
+	end)
+end)
+
+Fn.introButton(L("closeIntro"), 256, "dark", function()
+	Fn.closeIntro(function()
+		local c = env.NexvyrAvatarCleanup
+		if c then pcall(c) end
+	end)
+end)
+
+do
+local footer = new("Frame", {
+	Parent = intro, AnchorPoint = Vector2.new(0.5, 1), Position = UDim2.new(0.5, 0, 1, -16),
+	Size = UDim2.fromOffset(320, 22), BackgroundTransparency = 1,
+})
+new("TextLabel", {
+	Parent = footer, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5),
+	Size = UDim2.fromOffset(160, 22), BackgroundTransparency = 1, Text = L("introFooter"),
+	Font = Enum.Font.Garamond, TextSize = 18, TextColor3 = IC.soft,
+})
+end
+
+do
+local baseCleanup = env.NexvyrAvatarCleanup
+env.NexvyrAvatarCleanup = function()
+	pcall(function() if introGui then introGui:Destroy() end end)
+	if baseCleanup then baseCleanup() end
+end
+end
+
+task.spawn(function()
+	task.wait(0.2)
+	if not introGui or not introGui.Parent then return end
+	local basePos = content.Position
+	content.Position = basePos + UDim2.fromOffset(0, 16)
+	tween(intro, TweenInfo.new(1.4, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { GroupTransparency = 0 })
+	tween(content, TweenInfo.new(1.4, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), { Position = basePos })
+	tween(introBgScale, TweenInfo.new(9, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Scale = 1 })
+end)
