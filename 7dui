@@ -1759,11 +1759,7 @@ function Fn.onStep()
 	State.animActive = Rig.mirror(char, State.sAnimator, State.mirror, nil)
 	Fn.syncPose()
 
-	local now = os.clock()
-	if now - State.lastScan > 0.3 then
-		State.lastScan = now
-		Fn.hideReal(char, State.hidden)
-	end
+	Fn.hideReal(char, State.hidden)
 
 	local cam = workspace.CurrentCamera
 	local head = char:FindFirstChild("Head")
@@ -1806,6 +1802,18 @@ function Fn.mount(char, hum, template)
 	shell.Parent = workspace.CurrentCamera or workspace
 
 	Fn.hideReal(char, State.hidden)
+	State.conns[#State.conns + 1] = char.DescendantAdded:Connect(function(d)
+		if d:IsA("BasePart") and d.Name ~= "HumanoidRootPart" then
+			local p = d.Parent
+			if p == char or (p and p:IsA("Accoutrement")) then
+				if State.hidden[d] == nil then State.hidden[d] = d.Transparency end
+				d.Transparency = 1
+			end
+		end
+	end)
+	State.conns[#State.conns + 1] = RunService.PreRender:Connect(function()
+		if State.char == char and char.Parent then Fn.hideReal(char, State.hidden) end
+	end)
 	State.lastScan = os.clock()
 	State.conns[#State.conns + 1] = RunService.RenderStepped:Connect(Fn.onStep)
 	State.conns[#State.conns + 1] = RunService.Stepped:Connect(function()
@@ -2341,20 +2349,28 @@ function Fn.copyCurrent()
 end
 
 track(LocalPlayer.CharacterAdded:Connect(function(char)
-	Fn.unmount()
+	if not State.template then
+		Fn.unmount()
+		return
+	end
 	local hum = char:WaitForChild("Humanoid", 15)
 	if not hum then return end
 	local hrp = char:WaitForChild("HumanoidRootPart", 15)
 	if not hrp then return end
-	char:WaitForChild("Animate", 4)
-	task.wait(0.4)
 	if LocalPlayer.Character ~= char or not State.template then return end
-	while applying do task.wait(0.2) end
 	local th = State.template:FindFirstChildOfClass("Humanoid")
-	if not th or th.RigType ~= hum.RigType then return end
+	if not th or th.RigType ~= hum.RigType then Fn.unmount() return end
 	local ok = Fn.mount(char, hum, State.template)
 	if ok then
 		Fn.setStatus(L("reappliedMsg"), T.green)
+		task.spawn(function()
+			for _ = 1, 6 do
+				task.wait(0.25)
+				if State.char ~= char or not State.shell then return end
+				State.pairList = Rig.pairs(char, State.shell)
+				State.offset = Rig.offset(char, State.shell)
+			end
+		end)
 	end
 end))
 
