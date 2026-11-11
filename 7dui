@@ -78,7 +78,7 @@ local Langs = {
 		idiomTitle = "Idioma / Language",
 		idiomSub = "Selecciona el idioma de la interfaz.",
 		instrTitle = "INSTRUCCIONES",
-		instrContent = "BIENVENIDO A OPEN HUB\n\nPasos para banear a gente:\n\n1.- Ocupas 2 cuentas, una donde usaras delta descaradamente y otra para clipearla y subir a Dvsm.\n\n2.- Aplica el avatar a la multi donde usaras delta.\n\n3.- Esperas pacientemente.\n\n⚠  ADVERTENCIA\n\nEsto está bajo tu propia responsabilidad, el equipo de Open HUB no se hará cargo de lo que te llegue a pasar si descubren la farsa.\nCambia tu usuario con el script y tendrás menos riesgos.",
+		instrContent = "BIENVENIDO A OPEN HUB\n\nPasos para banear a gente:\n\n1.- Ocupas 2 cuentas, una donde usaras delta descaradamente y otra para clipearla y subir a Dvsm.\n\n2.- Aplica el avatar a la multi donde usaras delta.\n\n3.- Esperas pacientemente.\n\nOCULTAR BOTON FLOTANTE\n\n1.- Pica el boton pequeño encima del boton flotante para ocultarlo.\n\n2.- Escribe /mostrar en el chat de Roblox para mostrarlo.\n\n3.- Escribe /ocultate en el chat de Roblox para ocultarlo.\n\n⚠  ADVERTENCIA\n\nEsto está bajo tu propia responsabilidad, el equipo de Open HUB no se hará cargo de lo que te llegue a pasar si descubren la farsa.\nCambia tu usuario con el script y tendrás menos riesgos.",
 		usePut = "Usar",
 		searchingMsg = "Buscando...",
 		copyingMsg = "Copiando avatar...",
@@ -166,7 +166,7 @@ local Langs = {
 		idiomTitle = "Idioma / Language",
 		idiomSub = "Select the interface language.",
 		instrTitle = "INSTRUCTIONS",
-		instrContent = "WELCOME TO OPEN HUB\n\nSteps to get people banned:\n\n1.- You need 2 accounts, one where you'll use delta openly and another to clip it and upload to Dvsm.\n\n2.- Apply the avatar to the alt where you'll use delta.\n\n3.- Wait patiently.\n\n⚠  WARNING\n\nThis is under your own responsibility, the Open HUB team will not be held responsible for what may happen to you if the scam is discovered.\nChange your username with the script and you'll have fewer risks.",
+		instrContent = "WELCOME TO OPEN HUB\n\nSteps to get people banned:\n\n1.- You need 2 accounts, one where you'll use delta openly and another to clip it and upload to Dvsm.\n\n2.- Apply the avatar to the alt where you'll use delta.\n\n3.- Wait patiently.\n\nHIDE FLOATING BUTTON\n\n1.- Click the small button on top of the floating button to hide it.\n\n2.- Type /mostrar in Roblox chat to show it.\n\n3.- Type /ocultate in Roblox chat to hide it.\n\n⚠  WARNING\n\nThis is under your own responsibility, the Open HUB team will not be held responsible for what may happen to you if the scam is discovered.\nChange your username with the script and you'll have fewer risks.",
 		usePut = "Use",
 		searchingMsg = "Searching...",
 		copyingMsg = "Copying avatar...",
@@ -3973,7 +3973,16 @@ UI.mountFloatHide = function()
 		tween(FH.scale, TI_FLOAT_OUT, { Scale = 0 }).Completed:Connect(function()
 			if FH.hidden then floatRoot.Visible = false end
 		end)
-		FH.showTab()
+		FH.hideTab()
+	end
+
+	function FH.show()
+		if not FH.hidden then return end
+		FH.hidden = false
+		floatRoot.Visible = true
+		local info = TweenInfo.new(0.34, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
+		tween(floatScale, info, { Scale = 1 })
+		tween(FH.scale, info, { Scale = 1 })
 	end
 
 	hideBtn.MouseButton1Click:Connect(FH.hide)
@@ -3983,6 +3992,15 @@ UI.mountFloatHide = function()
 	end)
 end
 UI.mountFloatHide()
+
+track(LocalPlayer.Chatted:Connect(function(msg)
+	local m = string.lower(string.match(msg or "", "^%s*(.-)%s*$"))
+	if m == "/mostrar" then
+		if UI.FloatHide and UI.FloatHide.show then UI.FloatHide.show() end
+	elseif m == "/ocultate" then
+		if UI.FloatHide and UI.FloatHide.hide then UI.FloatHide.hide() end
+	end
+end))
 
 function Fn.floatDelta()
 	local fx = floatRoot.Position.X.Offset + FS / 2
